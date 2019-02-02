@@ -1,0 +1,19 @@
+## Interface: 50400
+## Title: Lib: Common functions
+## Author: Ace3 Development Team
+## X-Website: http://www.wowace.com
+## X-Category: Library
+## X-License: Limited BSD
+
+## LoadOnDemand: 1
+## OptionalDeps: 
+
+
+LibCommon.base.lua
+LibCommon.UpgradeCheck.lua
+
+LibCommon.isanytype.lua
+LibCommon.iscallable.lua
+LibCommon.pairsOrOne.lua
+LibCommon.softassertf.lua
+

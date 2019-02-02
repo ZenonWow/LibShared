@@ -1,0 +1,11 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+
+<Script  file="LibCommon.base.lua" />
+<Script  file="LibCommon.UpgradeCheck.lua" />
+
+<Script  file="LibCommon.isanytype.lua" />
+<Script  file="LibCommon.iscallable.lua" />
+<Script  file="LibCommon.pairsOrOne.lua" />
+<Script  file="LibCommon.softassertf.lua" />
+
+</Ui>
