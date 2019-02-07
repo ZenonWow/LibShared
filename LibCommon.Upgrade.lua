@@ -1,75 +1,128 @@
-local UPGRADECHECK_VERSION = 2
+local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
+local LibCommon = _G[LIBCOMMON_NAME]
+assert(LibCommon and LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
+-- assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
+LibCommon.Require.Define
+LibCommon.Require.DefineTable
+LibCommon.Require.UpgradeFunction
+LibCommon.Require.UpgradeObject
+LibCommon.Require.initmetatable
 
--- Imports
-local softassert = assert(LibCommon and LibCommon.softassert, "LibCommon.UpgradeCheck requires LibCommon.softassert")
+-- GLOBALS:
+-- Used from _G:  error, tostring
+-- Used from LibCommon:  Require, DefineTable  (only for init)
+-- Used from LibCommon:  UpgradeFunction, UpgradeObject, initmetatable
+-- Exported to LibCommon:  Upgrade
 
 
-if  not LibCommon.UpgradeCheck  or  LibCommon.UpgradeCheck.UpgradeCheck(UPGRADECHECK_VERSION)  then
+-----------------------------
+--- Declare an upgrade to LibCommon.<feature>.
+-- Overwrites the registered version of  LibCommon.<feature>.
+-- If newvalue is not provided, then it's the caller's task to actually replace the feature.
+-- Usage alternatives:
+-- 
+-- LibCommon.Upgrade.<feature>[newversion] = newvalue
+-- 
+-- if  LibCommon.Upgrade.<feature>(newversion)  then
+--   local Feature = ..
+--   LibCommon.Upgrade.<feature>[newversion] = Feature
+-- end
+-- 
+-- local oldversion = LibCommon.Upgrade.<feature>(newversion)
+-- if oldversion then
+--   LibCommon.Upgrade.<feature>[newversion] = Feature
+-- end
+-- 
+-- @return nil if current implementation is up-to-date,  or the replaced oldversion if it needs upgrading.
+--
 
-	-- Lua globals
-	local setmetatable, error = setmetatable, error
-	-- Forward declaration of upvalues for UpgradeCheck. These cannot be referenced from outside.
-	local upgradeProxy, upgradedFeature
 
-	softassert( not LibCommon.UpgradeCheck, "Overwriting incompatible modification of LibCommon.UpgradeCheck" )
-	LibCommon.UpgradeCheck = setmetatable({}, {
-		__newindex = function(UpgradeCheck, feature, value)  error("Do not modify LibCommon.UpgradeCheck."..tostring(feature).." directly. Usage: LibCommon.UpgradeCheck.<feature>[newversion] = function ... end")  end,
+local FEATURE_NAME, FEATURE_VERSION = 'Upgrade', 1
 
-		--- LibCommon.UpgradeCheck.<feature>:  Initiate declaring an upgrade to LibCommon.<feature>
-		-- @return a version-checking proxy for LibCommon.<feature>
-		-- Store the feature name for the next  upgradeProxy[newversion]
-		__index = function(UpgradeCheck, feature)  upgradedFeature = feature ; return upgradeProxy  end,
 
-		--- LibCommon.UpgradeCheck('<feature>', newversion):  Check if this version is newer than current LibCommon.<feature>
-		-- @return nil if current implementation is up-to-date,  or the old version of the replaced implementation if it needs upgrading.
-		__call = function(UpgradeCheck, feature, newversion)
-			_G.geterrorhandler()("Versioning requires LibCommon.UpgradeCheck")  end
-			return  not LibCommon[feature]  and  0  -- oldversion == 0
-		end,
+--[[ Alternative exists-checks:
+local oldversion, Upgrade = LibCommon:UpgradeFunction(FEATURE_NAME, FEATURE_VERSION)
+if oldversion then
+	local Upgrade = Upgrade or {}
+	LibCommon:UpgradeFunction(FEATURE_NAME, FEATURE_VERSION, Upgrade)
+--
+local Upgrade, oldversion = LibCommon:UpgradeObject(FEATURE_NAME, FEATURE_VERSION)
+if Upgrade then
+--
+local oldversion = LibCommon.Versions.Upgrade
+if oldversion < FEATURE_VERSION then
+	local Upgrade = LibCommon.DefineTable.Upgrade
+	LibCommon.Versions.Upgrade = FEATURE_VERSION
+--
+if LibCommon.Versions.Upgrade < FEATURE_VERSION then
+	local Upgrade = LibCommon.DefineTable.Upgrade
+	LibCommon.Versions.Upgrade = FEATURE_VERSION
+--
+if not LibCommon.Has.Upgrade then
+	local Upgrade = LibCommon.DefineTable.Upgrade
+--]]
 
-		--[[ Alternative that accepts upgrade as last parameter.
-		--- LibCommon.UpgradeCheck('<feature>', newversion, newvalue):  Check if this version is newer than current LibCommon.<feature>
-		-- Replaces old feature if  newvalue  is provided.
-		-- @return nil if current implementation is up-to-date,  or the replaced oldversion if it needs upgrading
-		__call = function(UpgradeCheck, feature, newversion, newvalue)
-			_G.geterrorhandler()("Versioning requires LibCommon.UpgradeCheck")  end
-			local oldversion = not LibCommon[feature]  and  0
-			if nil~=newvalue and oldversion then  LibCommon[feature] = newvalue  end
-			return oldversion
-		end,
-		--]]
-	})
 
-	--- LibCommon._VersionOf.<feature>:  Get version of LibCommon.<feature>
-  -- @return version of LibCommon.<feature> (default 1)  or  0 if feature is missing.
-	softassert( not LibCommon._VersionOf, "Overwriting incompatible modification of LibCommon._VersionOf" )
-	LibCommon._VersionOf = setmetatable({ UpgradeCheck = UPGRADER_VERSION }, { __index = function(_VersionOf, feature)  return  LibCommon[feature]  and 1  or 0  end })
+if LibCommon.Define.Upgrade then
+	local Upgrade = LibCommon.DefineTable.Upgrade
 
-	-- local upgradeProxy: upgradeProxy[newversion] = newimplementation
-	upgradeProxy = setmetatable({}, {
-		--- LibCommon.UpgradeCheck.<feature>[newversion] = newvalue:  Upgrade  LibCommon.<feature>  if newvalue is a newer version.
-		__newindex = function(upgradeProxy, newversion, newvalue)
-			if LibCommon._VersionOf[upgradedFeature] < newversion then
-				LibCommon._VersionOf[upgradedFeature] = newversion
-				LibCommon[upgradedFeature] = newvalue
-			end
-			upgradedFeature = nil
-		end,
-		--- LibCommon.UpgradeCheck.<feature>[newversion]:  Declare an upgrade to LibCommon.<feature>
-		-- Overwrites the registered version of  LibCommon.<feature>,  but it's the caller's task is to actually upgrade the feature.
-		-- @return nil if current implementation is up-to-date,  or the replaced oldversion if it needs upgrading
-		__call = function(upgradeProxy, newversion)
-			local oldversion = LibCommon._VersionOf[upgradedFeature]
-			if oldversion < newversion
-			then  LibCommon._VersionOf[upgradedFeature] = newversion
-			else  oldversion = false
-			end
-			upgradedFeature = nil
-			return oldversion
-		end,
-	})
-	upgradeProxy.__index = upgradeProxy.__call
+	-- Upvalued Lua globals:
+	-- local setmetatable = setmetatable
 
-end -- LibCommon.UpgradeCheck
+	local initmetatable = LibCommon.Require.initmetatable
+
+	local UpgradeMeta = initmetatable(Upgrade)
+	-- initsubtable(UpgradeMeta)._UpgradeProxy
+	-- initsubtable(UpgradeMeta, '_UpgradeProxy')
+	UpgradeMeta.UpgradeProxy = UpgradeMeta.UpgradeProxy or {}
+	local UpgradeProxy = UpgradeMeta.UpgradeProxy
+	local UpgradeProxyMeta = initmetatable(UpgradeProxy)
+
+
+	-- LibCommon.Upgrade 's metatable
+
+	--- LibCommon.Upgrade.<feature> = ..  modification disallowed.
+	function UpgradeMeta.__newindex(Upgrade, feature, value)
+		_G.error("Do not modify LibCommon.Upgrade.".._G.tostring(feature).." directly. Usage: LibCommon.Upgrade.<feature>[newversion] = function ... end")
+	end
+
+	--- LibCommon.Upgrade.<feature>:  Initiate declaring an upgrade to LibCommon.<feature>
+	-- @return a version-checking proxy for LibCommon.<feature>
+	-- Stores the feature name for the next  UpgradeProxy[newversion]
+	function UpgradeMeta.__index(Upgrade, feature)
+		UpgradeProxy._asObject = nil
+		UpgradeProxy._upgradedFeature = feature
+		return UpgradeProxy
+		-- Alternative:  make a throw-away object at each use.
+		-- return setmetatable({ _upgradedFeature = feature }, UpgradeProxyMeta)
+	end
+
+
+	function UpgradeProxy:AsObject()
+		self._asObject = true
+		return self
+	end
+
+	-- UpgradeProxy metatable
+
+	function UpgradeProxyMeta.__newindex(UpgradeProxy, newversion, newimpl)
+		local feature, UpgradeProxy._upgradedFeature  =  UpgradeProxy._upgradedFeature, nil
+		return LibCommon:UpgradeFunction(feature, newversion, newimpl)
+	end
+
+	function UpgradeProxyMeta.__call(UpgradeProxy, newversion, upgradeObject)
+		local feature, UpgradeProxy._upgradedFeature  =  UpgradeProxy._upgradedFeature, nil
+		if upgradeObject == true or UpgradeProxy._asObject then  return LibCommon:UpgradeObject(feature, newversion, upgradeObject)  end
+		return LibCommon:UpgradeFunction(feature, newversion)
+	end
+
+	-- UpgradeProxyMeta.__index    = UpgradeProxyMeta.__call
+	function UpgradeProxyMeta.__index(UpgradeProxy, newversion)
+		local feature, UpgradeProxy._upgradedFeature  =  UpgradeProxy._upgradedFeature, nil
+		_G.error("Usage: LibCommon.Upgrade."..feature.."("..newversion..") - use function call instead of indexing with version.")
+  end
+
+
+end -- LibCommon.Upgrade
 
 

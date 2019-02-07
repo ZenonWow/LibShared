@@ -1,10 +1,13 @@
-local _G, LibCommon = _G, LibCommon or {}
-_G.LibCommon = LibCommon
+local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
+local LibCommon = _G[LIBCOMMON_NAME]
+assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
 
--- Imports
-local UpgradeCheck = assert(LibCommon and LibCommon.UpgradeCheck, "LibCommon.isanytype requires LibCommon.UpgradeCheck")
+-- GLOBALS:
+-- Used from _G:
+-- Used from LibCommon:
+-- Exported to LibCommon:  isanytype
 
--- Upvalued Lua globals
+-- Upvalued Lua globals:
 local type,select = type,select
 
 
@@ -13,7 +16,8 @@ local type,select = type,select
 -- @param value - any value to test
 -- @param t1..t* - names of accepted types
 -- @return value if its type is accepted,  otherwise nil
-UpgradeCheck.isanytype[1] = function(value, t1, t2, t3, ...)
+--
+LibCommon.Define.isanytype = function(value, t1, t2, t3, ...)
 	local t = type(value)
 	if t == t1 or t == t2 or t == t3 then  return value  end
 	if not ... then  return nil  end
@@ -23,5 +27,12 @@ UpgradeCheck.isanytype[1] = function(value, t1, t2, t3, ...)
 	end
 	return nil
 end
+
+--[[
+LibCommon.Upgrade.isanytype[1] = function()  ..  end
+if LibCommon.Upgrade.isanytype[1] then  ..  end
+if LibCommon:UpgradeFeature('isanytype', 1, function() .. end) then  ..  end
+if LibCommon:UpgradeFeature('isanytype', 1) then  ..  end
+--]]
 
 
