@@ -9,28 +9,6 @@
 ## OptionalDeps:
 
 
-# Baseline, using .Define:
-LibCommon.Define.lua
-LibCommon.istype.lua
-LibCommon.softassert.lua
-LibCommon.initmetatable.lua
-
-# Import-export, using .Require:
-LibCommon.Require.lua
-LibCommon.Import.lua
-
-# Upgrade, using .Require, .Versions:
-LibCommon.UpgradeFunction.lua
-LibCommon.UpgradeObject.lua
-LibCommon.Upgrade.lua
-
-# Specialized features, using .Define:
-LibCommon.isanytype.lua
-LibCommon.iscallable.lua
-LibCommon.pairsOrNil.lua
-LibCommon.pairsOrOne.lua
-LibCommon.debugfilename.lua
-
-# Conclusion, using .Define, .initmetatable:
-LibCommon.revision.lua
+# LibCommon-all.lua
+parts\all.xml
 

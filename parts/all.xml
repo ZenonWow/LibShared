@@ -1,23 +1,28 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
+<!-- # Baseline, using .Define: -->
 <Script  file="LibCommon.Define.lua" />
 <Script  file="LibCommon.istype.lua" />
 <Script  file="LibCommon.softassert.lua" />
 <Script  file="LibCommon.initmetatable.lua" />
 
+<!-- # Import-export, using .Require: -->
 <Script  file="LibCommon.Require.lua" />
 <Script  file="LibCommon.Import.lua" />
 
+<!-- # Upgrade, using .Require, .Versions: -->
 <Script  file="LibCommon.UpgradeFunction.lua" />
 <Script  file="LibCommon.UpgradeObject.lua" />
 <Script  file="LibCommon.Upgrade.lua" />
 
+<!-- # Specialized features, using .Define: -->
 <Script  file="LibCommon.isanytype.lua" />
 <Script  file="LibCommon.iscallable.lua" />
 <Script  file="LibCommon.pairsOrNil.lua" />
 <Script  file="LibCommon.pairsOrOne.lua" />
 <Script  file="LibCommon.debugfilename.lua" />
 
+<!-- # Conclusion, using .Define, .initmetatable: -->
 <Script  file="LibCommon.revision.lua" />
 
 </Ui>
