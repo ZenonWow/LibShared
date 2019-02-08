@@ -56,7 +56,9 @@ end
 --
 LibCommon.Define._Missing = function(_namespace, features, client, stackdepth)
 	local isstring = LibCommon.isstring  or function(value)  return  type(value)=='string'   and value  end  -- Copied from LibCommon.istype.lua
-	local clientname = isstring(client)  or  type(client)=='table' and isstring(client.name)  or  "Executed code"
+	local clientname = isstring(client)
+		or  type(client)=='table' and ( isstring(client.name)  or  type(client.GetName)=='function' and client:GetName() )
+		or  "Executed code"
 	-- local clientname = _G.tostring( client or "Executed code" )
 	error( clientname..' requires "'..(isstring(_namespace.name) or 'LibCommon')..'.'..features..'" to be loaded before.' , (stackdepth or 1)+1 )
 end

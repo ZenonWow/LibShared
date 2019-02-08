@@ -5,6 +5,7 @@
 <Script  file="LibCommon.istype.lua" />
 <Script  file="LibCommon.softassert.lua" />
 <Script  file="LibCommon.initmetatable.lua" />
+<Script  file="LibCommon.AutoTablesMeta.lua" />
 
 <!-- # Import-export, using .Require: -->
 <Script  file="LibCommon.Require.lua" />
@@ -18,6 +19,7 @@
 <!-- # Specialized features, using .Define: -->
 <Script  file="LibCommon.isanytype.lua" />
 <Script  file="LibCommon.iscallable.lua" />
+<Script  file="LibCommon.indexOf.lua" />
 <Script  file="LibCommon.pairsOrNil.lua" />
 <Script  file="LibCommon.pairsOrOne.lua" />
 <Script  file="LibCommon.debugfilename.lua" />
