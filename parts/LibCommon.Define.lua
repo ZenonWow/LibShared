@@ -9,7 +9,7 @@ LibCommon.name = LibCommon.name or LIBCOMMON_NAME
 -- GLOBALS:
 -- Used from _G:  geterrorhandler, tostring, type
 -- Used from LibCommon:
--- Exported to LibCommon:  Define, Has, Versions
+-- Exported to LibCommon:  Define, Has, Revisions
 -- Exported mock to LibCommon:  Import
 
 -- Localized Lua globals:  (used only in "main chunk", not in functions, therefore not upvalued)
@@ -30,12 +30,12 @@ MyFeatureTable.<field> = MyFeatureTable.<field> or ..
 
 
 -----------------------------
--- LibCommon.Versions.<feature> == defined version of LibCommon.<feature>  or 0 if present, but no version defined  or -1 if not present.
+-- LibCommon.Revisions.<feature> == defined version of LibCommon.<feature>  or 0 if present, but no version defined  or -1 if not present.
 --
-LibCommon.Versions = LibCommon.Versions  or setmetatable({ _namespace = LibCommon }, {
-	__newindex = function(Versions, feature, newvalue)  _G.geterrorhandler()("To define a versioned feature use:  LibCommon.Upgrade.".._G.tostring(feature).."[newversion] = ..")  end,
-	__index    = function(Versions, feature)  return  Versions._namespace[feature]  and  0  or  -1  end,
-	-- __index    = function(Versions, feature)  return  rawget(Versions._namespace, feature)  and  0  or  -1  end,
+LibCommon.Revisions = LibCommon.Revisions  or setmetatable({ _namespace = LibCommon }, {
+	__newindex = function(Revisions, feature, newvalue)  _G.geterrorhandler()("To define a versioned feature use:  LibCommon.Upgrade.".._G.tostring(feature).."[newversion] = ..")  end,
+	__index    = function(Revisions, feature)  return  Revisions._namespace[feature]  and  0  or  -1  end,
+	-- __index    = function(Revisions, feature)  return  rawget(Revisions._namespace, feature)  and  0  or  -1  end,
 })
 
 

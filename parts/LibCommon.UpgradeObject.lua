@@ -3,12 +3,12 @@ local LibCommon = _G[LIBCOMMON_NAME]
 assert(LibCommon and LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
 -- assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
 LibCommon.Require.Define
-LibCommon.Require.Versions
+LibCommon.Require.Revisions
 
 -- GLOBALS:
 -- Used from _G:  DEVMODE, geterrorhandler
 -- Used from LibCommon:  Require, Define  (only for init)
--- Used from LibCommon:  Versions
+-- Used from LibCommon:  Revisions
 -- Exported to LibCommon:  UpgradeObject
 
 -- Upvalued Lua globals:
@@ -24,7 +24,7 @@ local rawset,type = rawset,type
 -- function Define.LibCommon.UpgradeObject(LibCommon, feature, newversion)
 --
 LibCommon.Define.UpgradeObject = function(LibCommon, feature, newversion)
-	local oldversion = LibCommon.Versions[feature]
+	local oldversion = LibCommon.Revisions[feature]
 	if oldversion < newversion then
 		local value = LibCommon[feature]
 
@@ -36,7 +36,7 @@ LibCommon.Define.UpgradeObject = function(LibCommon, feature, newversion)
 			-- LibCommon.Override[feature] = value
 		end
 
-		rawset(LibCommon.Versions, feature, newversion)
+		rawset(LibCommon.Revisions, feature, newversion)
 		-- Note:  the order of return values is consistent with LibStub:NewLibrary()
 		-- But the opposite of LibCommon:UpgradeFunction() which returns oldversion first.
 		-- It would be possible to swap these and be consistent with :UpgradeFunction() UpgradeFeature

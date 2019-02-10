@@ -16,7 +16,7 @@ local AutoTablesMeta = LibCommon.Require.AutoTablesMeta
 -----------------------------
 --- LibCommon. AutoTablesMeta:  metatable that auto-creates empty inner tables when first referenced.
 --
-LibCommon.AutoTablesMeta = LibCommon.AutoTablesMeta or { __index = function(self, key)  if key ~= nil then  self[key] = {}  end  ;  return self[key]  end }
+LibCommon.AutoTablesMeta = LibCommon.AutoTablesMeta or { __index = function(self, key)  if key ~= nil then  local v={} ; self[key]=v ; return v  end  end }
 
 -- Non-Lua:  local AutoTablesMeta = { __index = function(self, key)  return key ~= nil and self[key] = {} or nil  end }
 

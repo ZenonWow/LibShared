@@ -49,14 +49,14 @@ if oldversion then
 local Upgrade, oldversion = LibCommon:UpgradeObject(FEATURE_NAME, FEATURE_VERSION)
 if Upgrade then
 --
-local oldversion = LibCommon.Versions.Upgrade
+local oldversion = LibCommon.Revisions.Upgrade
 if oldversion < FEATURE_VERSION then
 	local Upgrade = LibCommon.DefineTable.Upgrade
-	LibCommon.Versions.Upgrade = FEATURE_VERSION
+	LibCommon.Revisions.Upgrade = FEATURE_VERSION
 --
-if LibCommon.Versions.Upgrade < FEATURE_VERSION then
+if LibCommon.Revisions.Upgrade < FEATURE_VERSION then
 	local Upgrade = LibCommon.DefineTable.Upgrade
-	LibCommon.Versions.Upgrade = FEATURE_VERSION
+	LibCommon.Revisions.Upgrade = FEATURE_VERSION
 --
 if not LibCommon.Has.Upgrade then
 	local Upgrade = LibCommon.DefineTable.Upgrade

@@ -3,12 +3,12 @@ local LibCommon = _G[LIBCOMMON_NAME]
 assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
 
 -- GLOBALS:
--- Used from _G:  geterrorhandler
+-- Used from _G:  geterrorhandler  (might be hooked/modified)
 -- Used from LibCommon:
--- Exported to LibCommon:  softassert, softassertf
+-- Exported to LibCommon:  asserttype, assertf,  softassert, softassertf
 
 -- Upvalued Lua globals
-local format = string.format
+local format,error,type = string.format,error,type
 
 
 -----------------------------
@@ -25,7 +25,30 @@ end
 
 
 -----------------------------
---- LibCommon.softassert(condition, message)
+--- LibCommon. asserttype(condition, message)
+-- Enforce a type. Raises error if the actual type is different.
+-- @param value - to check for type.
+-- @param typename - name of expected type.
+-- @param message - error message prefixed to:  "<typename> expected, got <type>"
+-- Stops execution if value is not the expected type.
+--
+LibCommon.asserttype = LibCommon.asserttype  or function(value, typename, message)
+	if type(value)~=typename then  error( (message or "")..typename.." expected, got "..type(dataobj) )  end
+end
+
+
+-----------------------------
+--- LibCommon. assertf(condition, messageFormat, formatParameter* )
+-- Enforce a condition. Raises error if condition fails.
+-- @param condition - result of a check that is expected to return a truthy value.
+-- @param messageFormat - error message passed to  string.format(), then  error()  if condition fails.
+-- Stops execution if condition fails, like  assert().
+--
+LibCommon.assertf = LibCommon.assertf  or function(ok, messageFormat, ...)  if not ok then  error( format(messageFormat, ...) )  end  end
+
+
+-----------------------------
+--- LibCommon. softassert(condition, message)
 -- Check for unexpected values or anomalies without crashing. Reports anomaly, then goes on.
 -- @param condition - result of a check that is expected to return a truthy value.
 -- @param message - error message passed to  errorhandler()  if condition fails.
@@ -46,7 +69,7 @@ LibCommon.Define.softassert = function(ok, message)  return ok, not ok and (_G.g
 
 
 -----------------------------
---- LibCommon.softassertf( condition, messageFormat, formatParameter* )
+--- LibCommon. softassertf( condition, messageFormat, formatParameter* )
 -- @param condition - result of a check that is expected to return a truthy value.
 -- @param messageFormat - error message passed to  string.format(), then  errorhandler()  if condition fails.
 -- Continue execution even if condition fails, unlike  assert().

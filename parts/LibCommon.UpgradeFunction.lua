@@ -4,7 +4,7 @@ assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
 
 -- GLOBALS:
 -- Used from _G:
--- Used from LibCommon:  Require, Versions
+-- Used from LibCommon:  Require, Revisions
 -- Exported to LibCommon:  UpgradeFunction
 
 -- Upvalued Lua globals:
@@ -24,13 +24,13 @@ local rawset = rawset
 -- end
 --
 LibCommon.Define.UpgradeFunction = function(LibCommon, feature, newversion, newimpl)
-	local oldversion = LibCommon.Require.Versions[feature]
+	local oldversion = LibCommon.Require.Revisions[feature]
 	if oldversion < newversion then
 		local oldimpl = LibCommon[feature]  --  or  true
 		if newimpl then
 			LibCommon[feature] = newimpl
 			-- rawset(LibCommon         , feature, newimpl)
-			rawset(LibCommon.Versions, feature, newversion)
+			rawset(LibCommon.Revisions, feature, newversion)
 		end
 		return oldversion, oldimpl
 		-- Note:  LibStub:NewLibrary() and LibCommon:UpgradeObject() return these in the opposite order.
