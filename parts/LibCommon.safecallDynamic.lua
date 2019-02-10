@@ -1,4 +1,4 @@
--- Export  LibCommon.safecallDynamic
+-- Export  LibCommon.safecallDynamic, softassert
 
 
 --------------------------------------------------
@@ -26,13 +26,16 @@ elseif not LibCommon.safecallDynamic then
 	LibCommon.errorhandler = LibCommon.errorhandler or  function(errorMessage)  return true and _G.geterrorhandler()(errorMessage)  end
 	local errorhandler = LibCommon.errorhandler
 	
+	-- softassert(condition, message):  Report error without halting.
+	LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+
 	function LibCommon.safecallDynamic(unsafeFunc, ...)
 		-- we check to see if the unsafeFunc passed is actually a function here and don't error when it isn't
 		-- this safecall is used for optional functions like OnInitialize OnEnable etc. When they are not
 		-- present execution should continue without hinderance
 		if  not unsafeFunc  then  return  end
 		if  type(unsafeFunc)~='function'  then
-			_G.geterrorhandler()("Usage: safecall(unsafeFunc):  function expected, got "..type(unsafeFunc))
+			LibCommon.softassert(false, "Usage: safecall(unsafeFunc):  function expected, got "..type(unsafeFunc))
 			return
 		end
 

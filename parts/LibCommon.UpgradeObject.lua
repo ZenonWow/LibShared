@@ -8,7 +8,7 @@ assert(LibCommon.Revisions, 'Include "LibCommon.Define.lua" before.')
 -- GLOBALS:
 -- Used from _G:  DEVMODE, geterrorhandler
 -- Used from LibCommon:  Revisions
--- Exported to LibCommon:  UpgradeObject
+-- Exported to LibCommon:  UpgradeObject, [softassert]
 
 -- Upvalued Lua globals:
 local rawset,type = rawset,type
@@ -28,7 +28,7 @@ LibCommon.UpgradeObject = LibCommon.UpgradeObject or  function(LibCommon, featur
 		local value = LibCommon[feature]
 
 		if type(value)~='table' then
-			if value and _G.DEVMODE then  _G.geterrorhandler()( "Warn: LibCommon:UpgradeObject("..feature..", "..newversion.."):  Upgraded feature is not a table, but a "..type(value) )  end
+			if value and _G.DEVMODE then  LibCommon.softassert(false, "Warn: LibCommon:UpgradeObject("..feature..", "..newversion.."):  Upgraded feature is not a table, but a "..type(value) )  end
 			value = {}
 			LibCommon[feature] = value
 			-- rawset(LibCommon, feature, value)
@@ -42,5 +42,7 @@ LibCommon.UpgradeObject = LibCommon.UpgradeObject or  function(LibCommon, featur
 		return value, oldversion
 	end
 end
+
+LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
 
 

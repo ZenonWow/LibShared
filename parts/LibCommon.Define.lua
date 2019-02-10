@@ -10,7 +10,7 @@ LibCommon.name = LibCommon.name or LIBCOMMON_NAME
 -- GLOBALS:
 -- Used from _G:  geterrorhandler, tostring, type
 -- Used from LibCommon:
--- Exported to LibCommon:  Define, Has, Revisions
+-- Exported to LibCommon:  Define, Has, Revisions, [softassert]
 -- Exported mock to LibCommon:  Import
 
 -- Localized Lua globals:  (used only in "main chunk", not in functions, therefore not upvalued)
@@ -30,11 +30,15 @@ MyFeatureTable.<field> = MyFeatureTable.<field> or ..
 
 
 
+-- softassert(condition, message):  Report error without halting.
+LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+
+
 -----------------------------
 -- LibCommon.Revisions.<feature> == defined version of LibCommon.<feature>  or 0 if present, but no version defined  or -1 if not present.
 --
 LibCommon.Revisions = LibCommon.Revisions  or setmetatable({ _namespace = LibCommon }, {
-	__newindex = function(Revisions, feature, newvalue)  _G.geterrorhandler()("To define a versioned feature use:  LibCommon.Upgrade.".._G.tostring(feature).."[newversion] = ..")  end,
+	__newindex = function(Revisions, feature, newvalue)  LibCommon.softassert(false, "To define a versioned feature use:  LibCommon.Upgrade.".._G.tostring(feature).."[newversion] = ..")  end,
 	__index    = function(Revisions, feature)  return  Revisions._namespace[feature]  and  0  or  -1  end,
 	-- __index    = function(Revisions, feature)  return  rawget(Revisions._namespace, feature)  and  0  or  -1  end,
 })
@@ -56,7 +60,8 @@ if  not LibCommon.Define  or  LibCommon.Define == LibCommon  then
 	LibCommon.Define = LibCommon.Define  or setmetatable({ _namespace = LibCommon }, {
 		__index = function(Define, feature)
 			local newroot = Define._namespace[feature]
-			if _G.type(newroot)~='table' then  _G.geterrorhandler()("Usage:  LibCommon.Define.<feature> = ..")
+			-- Traversing to a table (namespace) is ok. Otherwise it's probably a typo.
+			LibCommon.softassert(_G.type(newroot)=='table', "Usage:  LibCommon.Define.<feature> = ..")
 			return setmetatable({ _namespace = newroot }, getmetatable(Define))
 		end,
 		__newindex = function(Define, feature, newimpl)
@@ -75,7 +80,7 @@ end
 
 -----------------------------
 LibCommon.DefineTable = LibCommon.DefineTable  or setmetatable({ _namespace = LibCommon }, {
-	__newindex = function(DefineTable, feature, newvalue)  _G.geterrorhandler()("Usage:  local <Feature> = LibCommon.DefineTable.".._G.tostring(feature) )  end,
+	__newindex = function(DefineTable, feature, newvalue)  LibCommon.softassert(false, "Usage:  local <Feature> = LibCommon.DefineTable.".._G.tostring(feature) )  end,
 	__index    = function(DefineTable, feature)
 		local value = DefineTable._namespace[feature]
 		if not value then  value = {}  ;  DefineTable._namespace[feature] = value  end

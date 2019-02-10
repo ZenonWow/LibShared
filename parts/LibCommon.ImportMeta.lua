@@ -4,7 +4,7 @@ local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 -- GLOBALS:
 -- Used from _G:
 -- Used from LibCommon:  _Missing
--- Exported to LibCommon:  ImportMeta
+-- Exported to LibCommon:  ImportMeta, [softassert]
 
 
 -----------------------------
@@ -21,8 +21,9 @@ LibCommon.ImportMeta = LibCommon.ImportMeta or  setmetatable({}, {
 		ImportMeta._namespace[feature] = impl
 		return ImportMeta
 	end,
-	__newindex = function(ImportMeta, feature, newvalue)  _G.geterrorhandler()("Do not modify LibCommon.ImportMeta.".._G.tostring(feature))  end,
+	__newindex = function(ImportMeta, feature, newvalue)  LibCommon.softassert(false, "Do not modify LibCommon.ImportMeta.".._G.tostring(feature))  end,
 	end,
 })
 
+LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
 
