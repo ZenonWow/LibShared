@@ -5,6 +5,8 @@
 <Script  file="LibCommon.istype.lua" />
 <Script  file="LibCommon.softassert.lua" />
 <Script  file="LibCommon.initmetatable.lua" />
+<Script  file="LibCommon.safecallDispatch.lua" />
+<Script  file="LibCommon.safecallDynamic.lua" />
 <Script  file="LibCommon.AutoTablesMeta.lua" />
 
 <!-- # Import-export, using .Require: -->
