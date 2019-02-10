@@ -1,9 +1,9 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME]
-assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
+local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
 -- GLOBALS:
 -- Used from _G:  ipairs, geterrorhandler
+-- Used from LibCommon:
 -- Exported to _G:  inext
 -- Exported to LibCommon:  inext, tkeys, tvalues,  pairsOrNil, ipairsOrNil,  pairsOrOne, ipairsOrOne,  packOrOne
 
@@ -25,14 +25,14 @@ local inext = LibCommon.Require.inext
 
 -----------------------------
 -- LibCommon. inext() is the pair of next() that goes with ipairs()
-LibCommon.Define.inext = _G.ipairs({})
+LibCommon.inext = LibCommon.inext or  _G.ipairs({})
 _G.inext        = _G.inext  or LibCommon.inext
 local inext = LibCommon.inext
 
 
 -----------------------------
-LibCommon.Define.tkeys   = function(t)	 local ks={} ; for k,_ in next,t,nil do  ks[#ks+1] = k  end ; return ks  end
-LibCommon.Define.tvalues = function(t)  local vs={} ; for _,v in next,t,nil do  vs[#vs+1] = v  end ; return vs  end
+LibCommon.tkeys   = LibCommon.tkeys   or  function(t)	 local ks={} ; for k,_ in next,t,nil do  ks[#ks+1] = k  end ; return ks  end
+LibCommon.tvalues = LibCommon.tvalues or  function(t)  local vs={} ; for _,v in next,t,nil do  vs[#vs+1] = v  end ; return vs  end
 table.keys = tkeys
 table.values  = tvalues
 
@@ -49,22 +49,22 @@ local function nonext(t,i)     return nil,nil  end
 -- Iterate `t` if it's a table, skip otherwise.
 -- Report (not raise) error if `t` is unexpected type (true/number/string/function/thread).
 -- Continue execution even if reporting error.
-LibCommon.Define.pairsOrNil  = function(t)  if type(t)=='table' then  return next ,t,nil  else  if not t then  return nonext,t,nil  else  _G.geterrorhandler()(  "pairsOrNil(t) expected table or nil, got "..type(t) )  end end end
-LibCommon.Define.ipairsOrNil = function(t)  if type(t)=='table' then  return inext,t,0    else  if not t then  return nonext,t,nil  else  _G.geterrorhandler()( "ipairsOrNil(t) expected table or nil, got "..type(t) )  end end end
+LibCommon.pairsOrNil  = LibCommon.pairsOrNil  or  function(t)  if type(t)=='table' then  return next ,t,nil  else  if not t then  return nonext,t,nil  else  _G.geterrorhandler()(  "pairsOrNil(t) expected table or nil, got "..type(t) )  end end end
+LibCommon.ipairsOrNil = LibCommon.ipairsOrNil or  function(t)  if type(t)=='table' then  return inext,t,0    else  if not t then  return nonext,t,nil  else  _G.geterrorhandler()( "ipairsOrNil(t) expected table or nil, got "..type(t) )  end end end
 
 
 -----------------------------
 -- Iterate over a table or just one element. One-element tables can be replaced by the element.
 --- LibCommon.pairsOrOne(t):   iterate the map   `t` like  pairs(t), additionally if `t` is not a table then iterate over the one-element map    { [t]=t }
 --- LibCommon.ipairsOrOne(t):  iterate the array `t` like ipairs(t), additionally if `t` is not a table then iterate over the one-element array  { t }
-LibCommon.Define.pairsOrOne  = function(t)  if type(t)=='table' then  return next ,t,nil  else  return oneKeyIterator ,t,nil  end end
-LibCommon.Define.ipairsOrOne = function(t)  if type(t)=='table' then  return inext,t,0    else  return oneItemIterator,t,nil  end end
+LibCommon.pairsOrOne  = LibCommon.pairsOrOne  or  function(t)  if type(t)=='table' then  return next ,t,nil  else  return oneKeyIterator ,t,nil  end end
+LibCommon.ipairsOrOne = LibCommon.ipairsOrOne or  function(t)  if type(t)=='table' then  return inext,t,0    else  return oneItemIterator,t,nil  end end
 
 
 -----------------------------
 -- Pack parameters into an array for ipairsOrOne().
 -- With one parameter returns the solo element instead of a one-element array.
-LibCommon.Define.packOrOne   = function(...)  return  1 < select('#',...)  and  {...}  or  ...  end
+LibCommon.packOrOne   = LibCommon.packOrOne   or  function(...)  return  1 < select('#',...)  and  {...}  or  ...  end
 
 
 

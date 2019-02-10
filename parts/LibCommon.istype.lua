@@ -1,10 +1,9 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME]
-assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
+local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler
--- Used from LibCommon:  Define
+-- Used from LibCommon:
 -- Exported to _G:
 -- Exported to LibCommon:  istype,istable,isfunc,isstring,isnumber
 
@@ -27,17 +26,17 @@ local istype,isstring,isnumber,istable,isfunc = LibCommon:Import("istype,isstrin
 -- @param value  to check
 -- @return value  if its type is as expected,  false otherwise.
 --
-if LibCommon.Define.istype then
+if not LibCommon.istype then
 	--- LibCommon. istype(value, typename):  @return true if type of `value` is `typeName`
-	LibCommon.Define.istype    = function(value, typename)   return  type(value)==typename   and value  end
+	LibCommon.istype    = LibCommon.istype    or function(value, typename)   return  type(value)==typename   and value  end
 	--- LibCommon. isfunc(value):        @return true if type of `value` is 'function'
 	--- LibCommon. is<typename>(value):  @return true if type of `value` is <typeName>
-	LibCommon.Define.isstring  = function(value)  return  type(value)=='string'   and value  end
-	LibCommon.Define.isnumber  = function(value)  return  type(value)=='number'   and value  end
-	LibCommon.Define.istable   = function(value)  return  type(value)=='table'    and value  end
-	LibCommon.Define.isfunc    = function(value)  return  type(value)=='function' and value  end
+	LibCommon.isstring  = LibCommon.isstring  or function(value)  return  type(value)=='string'   and value  end
+	LibCommon.isnumber  = LibCommon.isnumber  or function(value)  return  type(value)=='number'   and value  end
+	LibCommon.istable   = LibCommon.istable   or function(value)  return  type(value)=='table'    and value  end
+	LibCommon.isfunc    = LibCommon.isfunc    or function(value)  return  type(value)=='function' and value  end
 	-- thread == coroutine
-	-- LibCommon.Define.isthread = function(value)  return  type(value)=='thread'   and value  end
+	-- LibCommon.isthread = LibCommon.isthread or function(value)  return  type(value)=='thread'   and value  end
 end
 
 

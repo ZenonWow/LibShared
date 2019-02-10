@@ -1,13 +1,12 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME]
-assert(LibCommon and LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
--- assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
-LibCommon.Require.Define
-LibCommon.Require.Revisions
+local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+
+-- assert(LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
+-- LibCommon.Require.Revisions
+assert(LibCommon.Revisions, 'Include "LibCommon.Define.lua" before.')
 
 -- GLOBALS:
 -- Used from _G:  DEVMODE, geterrorhandler
--- Used from LibCommon:  Require, Define  (only for init)
 -- Used from LibCommon:  Revisions
 -- Exported to LibCommon:  UpgradeObject
 
@@ -23,7 +22,7 @@ local rawset,type = rawset,type
 -- function LibCommon.Define.UpgradeObject(LibCommon, feature, newversion)
 -- function Define.LibCommon.UpgradeObject(LibCommon, feature, newversion)
 --
-LibCommon.Define.UpgradeObject = function(LibCommon, feature, newversion)
+LibCommon.UpgradeObject = LibCommon.UpgradeObject or  function(LibCommon, feature, newversion)
 	local oldversion = LibCommon.Revisions[feature]
 	if oldversion < newversion then
 		local value = LibCommon[feature]

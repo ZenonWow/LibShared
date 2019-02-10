@@ -1,10 +1,13 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME]
-assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
+local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+
+-- assert(LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
+-- LibCommon.Require.Revisions
+assert(LibCommon.Revisions, 'Include "LibCommon.Define.lua" before.')
 
 -- GLOBALS:
 -- Used from _G:
--- Used from LibCommon:  Require, Revisions
+-- Used from LibCommon:  Revisions
 -- Exported to LibCommon:  UpgradeFunction
 
 -- Upvalued Lua globals:
@@ -23,7 +26,7 @@ local rawset = rawset
 --   LibCommon:UpgradeFunction(FEATURE_NAME, FEATURE_VERSION, Feature)
 -- end
 --
-LibCommon.Define.UpgradeFunction = function(LibCommon, feature, newversion, newimpl)
+LibCommon.UpgradeFunction = LibCommon.UpgradeFunction or  function(LibCommon, feature, newversion, newimpl)
 	local oldversion = LibCommon.Require.Revisions[feature]
 	if oldversion < newversion then
 		local oldimpl = LibCommon[feature]  --  or  true

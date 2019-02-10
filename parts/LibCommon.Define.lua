@@ -2,6 +2,7 @@ local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
 local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
 local LIBCOMMON_REVISION = 1
+-- Check if full library with same or higher revision is already loaded.
 if (LibCommon.revision or 0) >= LIBCOMMON_REVISION then  return  end
 
 LibCommon.name = LibCommon.name or LIBCOMMON_NAME
@@ -52,7 +53,7 @@ LibCommon.Revisions = LibCommon.Revisions  or setmetatable({ _namespace = LibCom
 --
 if  not LibCommon.Define  or  LibCommon.Define == LibCommon  then
 
-	LibCommon.Define = LibCommon.Define  of setmetatable({ _namespace = LibCommon }, {
+	LibCommon.Define = LibCommon.Define  or setmetatable({ _namespace = LibCommon }, {
 		__index = function(Define, feature)
 			local newroot = Define._namespace[feature]
 			if _G.type(newroot)~='table' then  _G.geterrorhandler()("Usage:  LibCommon.Define.<feature> = ..")
@@ -65,9 +66,8 @@ if  not LibCommon.Define  or  LibCommon.Define == LibCommon  then
 		end,
 	})
 
-	LibCommon.LibCommon = LibCommon
 	-- for  Define.LibCommon.<feature> = ..
-	LibCommon.Define = LibCommon._DefinePlain
+	LibCommon.LibCommon = LibCommon
 
 end
 

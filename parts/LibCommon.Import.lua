@@ -1,14 +1,14 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME]
-assert(LibCommon and LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
--- LibCommon.Require("Define,Upgrade,isstring")
-LibCommon.Require.Define
-LibCommon.Require.Upgrade
-LibCommon.Require.isstring
+local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+
+-- assert(LibCommon and LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
+-- LibCommon.Require.isstring
+assert(LibCommon and LibCommon.isstring, 'Include "LibCommon.istype.lua" before.')
+
 
 -- GLOBALS:
 -- Used from _G:
--- Used from LibCommon:  Require, Define, Upgrade  (only for init)
+-- Used from LibCommon:  Require, Upgrade  (only for init)
 -- Used from LibCommon:  isstring
 -- Exported to LibCommon:  Import, _Missing
 
@@ -29,15 +29,21 @@ local ipairs,unpack,strsplit,type = ipairs,unpack,string.split,type
 -- @return LibCommon.<feature>(s)  if loaded.
 -- @throw if missing and not optional:  an error including client name or caller's filename.
 --
--- Check for mock implementation and drop it.
--- if LibCommon.Import and  not LibCommon:Import("Import", "LibCommon.Import", true)  then  LibCommon.Import = nil  end
---
--- LibCommon.Define.Import = function(_namespace, features, client, optional, stackdepth)
+-- Using LibCommon.Revisions to identify mock implementation.
+-- LibCommon.Require.Revisions
+-- if LibCommon.Revisions.Import == 0  then  LibCommon.Import = nil  end
+-- rawset(LibCommon.Revisions, 'Import', 1)
 --
 -- Using LibCommon.Upgrade to override mock implementation.
-local IMPORT_REVISION = 1
+-- local IMPORT_REVISION = 1
+-- LibCommon.Require.Upgrade
+-- LibCommon.Upgrade.Import[IMPORT_REVISION] = function(_namespace, features, client, optional, stackdepth)
 
-LibCommon.Upgrade.Import[IMPORT_REVISION] = function(_namespace, features, client, optional, stackdepth)
+-- Check for mock implementation and drop it.
+if LibCommon.Import and  not LibCommon:Import("Import", "LibCommon.Import", true)  then  LibCommon.Import = nil  end
+
+
+LibCommon.Import = LibCommon.Import or  function(_namespace, features, client, optional, stackdepth)
 	local list, impls, missing = strsplit(", ", features), { n = 0 }
 	for  i,feature  in ipairs(list) do  if feature ~= "" then
 		impls.n, impl = impls.n + 1, _namespace[feature]
@@ -54,7 +60,7 @@ end
 -- @param stackdepth  how deep the trouble is...  @see 2nd parameter of  error()
 -- @throw a "requires" error including client name or caller's filename.
 --
-LibCommon.Define._Missing = function(_namespace, features, client, stackdepth)
+LibCommon._Missing = LibCommon._Missing or  function(_namespace, features, client, stackdepth)
 	local isstring = LibCommon.isstring  or function(value)  return  type(value)=='string'   and value  end  -- Copied from LibCommon.istype.lua
 	local clientname = isstring(client)
 		or  type(client)=='table' and ( isstring(client.name)  or  type(client.GetName)=='function' and client:GetName() )

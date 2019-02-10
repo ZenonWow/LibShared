@@ -1,9 +1,6 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
 local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
-local LIBCOMMON_REVISION = 1
-if (LibCommon.revision or 0) >= LIBCOMMON_REVISION then  return  end
-
 -- GLOBALS:
 -- Used from _G:  geterrorhandler, tostring
 -- Used from LibCommon:
@@ -18,11 +15,13 @@ local setmetatable = setmetatable
 
 
 --[[ Copy-paste import code:
--- Shared function:
-LibCommon.Define.MyFeature = function()  ..  end
--- Shared table:
-local MyFeatureTable = LibCommon.DefineTable.MyFeatureTable
-MyFeatureTable.<data> = MyFeatureTable.<data> or ..
+-- Cache in local variable:
+local Feature = LibCommon.Require.<feature>
+Feature(..)
+-- Use in-situ:
+LibCommon.Require.<feature>(..)
+-- Or just to check if loaded:
+LibCommon.Require.<feature>
 --]]
 
 
@@ -61,7 +60,7 @@ LibCommon.Has = LibCommon.Has  or setmetatable({ _namespace = LibCommon }, {
 -----------------------------
 -- Mock implementation of  LibCommon:Import  that reports an error when used, then continues execution.
 --- LibCommon:Import("<feature>[,<feature>]*", client or "clientname")
-LibCommon.Define.Import = function(FromLib, features, client, optional, stackdepth)
+LibCommon.Import = LibCommon.Import or  function(FromLib, features, client, optional, stackdepth)
 	-- Signal it's the mock implementation.
 	if features == 'Import' then  return nil  end
 	-- Importing only one feature (no list of features) that is present won't report an error as a convenience.

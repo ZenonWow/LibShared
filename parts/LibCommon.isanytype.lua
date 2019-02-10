@@ -1,6 +1,5 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME]
-assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
+local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
 -- GLOBALS:
 -- Used from _G:
@@ -17,7 +16,7 @@ local type,select = type,select
 -- @param t1..t* - names of accepted types
 -- @return value if its type is accepted,  otherwise nil
 --
-LibCommon.Define.isanytype = function(value, t1, t2, t3, ...)
+LibCommon.isanytype = LibCommon.isanytype or  function(value, t1, t2, t3, ...)
 	local t = type(value)
 	if t == t1 or t == t2 or t == t3 then  return value  end
 	if not ... then  return nil  end

@@ -1,8 +1,7 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME]
-assert(LibCommon and LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
--- assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
-LibCommon.Require.Define
+local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+
+assert(LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
 LibCommon.Require.DefineTable
 LibCommon.Require.UpgradeFunction
 LibCommon.Require.UpgradeObject
@@ -63,7 +62,7 @@ if not LibCommon.Has.Upgrade then
 --]]
 
 
-if LibCommon.Define.Upgrade then
+if not LibCommon.Upgrade then
 	local Upgrade = LibCommon.DefineTable.Upgrade
 
 	-- Upvalued Lua globals:

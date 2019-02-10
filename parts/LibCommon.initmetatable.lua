@@ -1,6 +1,5 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME]
-assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
+local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler
@@ -25,7 +24,7 @@ local initmetatable = LibCommon.Require.initmetatable
 --- LibCommon. merge(obj, { field1 = value1, field2 = value2, .. } )
 -- Merges the second parameter into the first. That is, sets the fields specified in 2nd parameter.
 -- @return obj or second  If first table is nil, it returns the second, which can be nil as well.
-LibCommon.Define.merge = function(obj, second)
+LibCommon.merge = LibCommon.merge or  function(obj, second)
 	-- Functional style:  partially apply obj.
 	if not second then  return  function(values) return LibCommon.merge(obj, values) end  end
 	-- Merge the second table into first. Check if the 2 tables are the same.
@@ -54,7 +53,7 @@ end
 -- Non-Lua: local function initmetatable(obj)  return  getmetatable(obj) or ( setmetatable(obj, local mt={}) ; return mt )  end
 -- Non-Lua: local function initmetatable(obj)  return  getmetatable(obj) else { let mt={} ; setmetatable(obj, mt) ; return mt }  end
 --
-LibCommon.Define.initmetatable = function(obj, setFields)
+LibCommon.initmetatable = LibCommon.initmetatable or  function(obj, setFields)
 	local meta = getmetatable(obj)
 	if type(meta)=='table' then
 		LibCommon.merge(meta, setFields)
@@ -66,7 +65,7 @@ LibCommon.Define.initmetatable = function(obj, setFields)
 end
 
 --[[ One-liner.
-LibCommon.Define.initmetatable = function(obj, setFields)
+LibCommon.initmetatable = LibCommon.initmetatable or  function(obj, setFields)
 	local meta = getmetatable(obj) ; if type(meta)=='table' then  LibCommon.merge(meta, setFields)  elseif meta==nil then  meta = setFields or {} ; setmetatable(obj, meta)  end  ;  return meta
 end
 --]]

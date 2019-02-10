@@ -1,6 +1,5 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME]
-assert(LibCommon and LibCommon.Define, 'Include "LibCommon.Define.lua" before.')
+local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler  (might be hooked/modified)
@@ -12,39 +11,31 @@ local format,error,type = string.format,error,type
 
 
 -----------------------------
--- TODO
--- reporterror(): Report error without failing.
-LibCommon.Define.reporterror = function(errorMessage)
-	CallbackHandler.errorsReported = CallbackHandler.errorsReported or {}
-	if  CallbackHandler.errorsReported[errorMessage]  then  return false  end
-	CallbackHandler.errorsReported[errorMessage] = _G.time()
-	local err = _G.geterrorhandler()(errorMessage)
-	-- Avoiding tailcall: reporterror() function would show up as "?" in stacktrace, making it harder to understand.
-	return err
-end
-
-
------------------------------
---- LibCommon. asserttype(condition, message)
--- Enforce a type. Raises error if the actual type is different.
+--- LibCommon. asserttype(value, typename, [messagePrefix])
+-- Raises error and stops execution if value's type is not the expected `typename`.
 -- @param value - to check for type.
--- @param typename - name of expected type.
--- @param message - error message prefixed to:  "<typename> expected, got <type>"
--- Stops execution if value is not the expected type.
+-- @param typename (string) - name of expected type.
+-- @param messagePrefix (string/nil) - optional error message prefixed to:  "<typename> expected, got <type>"
 --
-LibCommon.asserttype = LibCommon.asserttype  or function(value, typename, message)
-	if type(value)~=typename then  error( (message or "")..typename.." expected, got "..type(dataobj) )  end
+LibCommon.asserttype = LibCommon.asserttype  or function(value, typename, messagePrefix)
+	if type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value) )  end
 end
 
 
 -----------------------------
---- LibCommon. assertf(condition, messageFormat, formatParameter* )
+--- errorf(...) = assertf(false, ...)
+--- softerror(...) = softassert(false, ...)
+--- softerrorf(...) = softassertf(false, ...)
+
+
+-----------------------------
+--- LibCommon. assertf(condition, messageFormat, formatParameter...):  
 -- Enforce a condition. Raises error if condition fails.
 -- @param condition - result of a check that is expected to return a truthy value.
 -- @param messageFormat - error message passed to  string.format(), then  error()  if condition fails.
 -- Stops execution if condition fails, like  assert().
 --
-LibCommon.assertf = LibCommon.assertf  or function(ok, messageFormat, ...)  if not ok then  error( format(messageFormat, ...) )  end  end
+LibCommon.assertf = LibCommon.assertf or  function(ok, messageFormat, ...)  if not ok then  error( format(messageFormat, ...) )  end  end
 
 
 -----------------------------
@@ -55,7 +46,7 @@ LibCommon.assertf = LibCommon.assertf  or function(ok, messageFormat, ...)  if n
 -- Continue execution even if condition fails, unlike  assert().
 -- @return condition, (message if condition fails)
 --
-LibCommon.Define.softassert = function(ok, message)
+LibCommon.softassert = LibCommon.softassert or  function(ok, message)
 	-- Readabable version with alternatives.
 	return  ok,  not ok  and  (_G.geterrorhandler()(message) or message)  or  nil
 	-- if ok then  return ok,nil  else  _G.geterrorhandler()(message) ; return ok,message  end
@@ -63,19 +54,19 @@ LibCommon.Define.softassert = function(ok, message)
 end
 
 --[[ One-liner for copy-paste inclusion. Pick your style.
-LibCommon.Define.softassert = function(ok, message)  return  ok,  not ok  and  (_G.geterrorhandler()(message) or message)  or  nil  end
-LibCommon.Define.softassert = function(ok, message)  return ok, not ok and (_G.geterrorhandler()(message) or message) or nil  end
+LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return  ok,  not ok  and  (_G.geterrorhandler()(message) or message)  or  nil  end
+LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, not ok and (_G.geterrorhandler()(message) or message) or nil  end
 --]]
 
 
 -----------------------------
---- LibCommon. softassertf( condition, messageFormat, formatParameter* )
+--- LibCommon. softassertf( condition, messageFormat, formatParameter...)
 -- @param condition - result of a check that is expected to return a truthy value.
 -- @param messageFormat - error message passed to  string.format(), then  errorhandler()  if condition fails.
 -- Continue execution even if condition fails, unlike  assert().
 -- @return condition, (message if condition fails)
 --
-LibCommon.Define.softassertf = function(ok, messageFormat, ...)
+LibCommon.softassertf = LibCommon.softassertf or  function(ok, messageFormat, ...)
 	if ok then  return ok,nil  end
 	local message = format(messageFormat, ...)
   _G.geterrorhandler()(message)
@@ -83,7 +74,7 @@ LibCommon.Define.softassertf = function(ok, messageFormat, ...)
 end
 
 --[[ One-liner for copy-paste inclusion. Sort of.
-LibCommon.Define.softassertf = function(ok, message, ...)
+LibCommon.softassertf = LibCommon.softassertf or  function(ok, message, ...)
 	if ok then  return ok,nil  else  message = format(message, ...) ; _G.geterrorhandler()(message) ; return ok,message  end end
 end
 --]]
