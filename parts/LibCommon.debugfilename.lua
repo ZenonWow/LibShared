@@ -11,7 +11,7 @@ local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 -----------------------------
 LibCommon.debugfilename = LibCommon.debugfilename  or function(stackdepth)
 	-- Allow hooking (replacing) _G.debugstack()
-	return _G.debugstack( (stackdepth or 1)+1, 3, 0):match([[\(.-)[:>]]])
+	return _G.debugstack( (stackdepth or 1)+1, 3, 0):match( "\\(.-)[:>]")
 end
 
 

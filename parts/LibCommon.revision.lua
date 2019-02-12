@@ -1,8 +1,8 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
 local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
-assert(LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
-LibCommon.Require.initmetatable
+-- assert(LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
+-- LibCommon.Require.initmetatable
 
 local LIBCOMMON_REVISION = 1
 -- Check if full library with same or higher revision is already loaded.
@@ -22,7 +22,7 @@ if (LibCommon.revision or 0) >= LIBCOMMON_REVISION then  return  end
 --
 LibCommon.revision = LIBCOMMON_REVISION
 LibCommon.name = LibCommon.name or LIBCOMMON_NAME
-LibCommon._metatable = LibCommon.initmetatable(LibCommon)
+LibCommon._metatable = LibCommon.Require.initmetatable(LibCommon)
 LibCommon._metatable.__tostring = function(LibCommon)  return (LibCommon.name or LIBCOMMON_NAME).." (r".._G.tostring(LibCommon.revision)..")"  end
 
 --[[

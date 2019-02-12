@@ -23,6 +23,7 @@ elseif not LibCommon.safecallDispatch then
 	-- Avoiding tailcall: errorhandler() function would show up as "?" in stacktrace, making it harder to understand.
 	LibCommon.errorhandler = LibCommon.errorhandler or  function(errorMessage)  return true and _G.geterrorhandler()(errorMessage)  end
 	local errorhandler = LibCommon.errorhandler
+	local xpcall = _G.xpcall
 
 
 	local SafecallDispatchers = {}
@@ -43,8 +44,8 @@ elseif not LibCommon.safecallDispatch then
 
 		local ARGS = {}
 		for i = 1, argCount do ARGS[i] = "a"..i end
-		sourcecode = sourcecode:gsub("ARGS", tconcat(ARGS, ","))
-		local creator = assert(loadstring(sourcecode, "SafecallDispatchers[argCount="..argCount.."]"))
+		sourcecode = sourcecode:gsub("ARGS", _G.table.concat(ARGS, ","))
+		local creator = _G.assert(_G.loadstring(sourcecode, "SafecallDispatchers[argCount="..argCount.."]"))
 		local dispatcher = creator(xpcall, errorhandler)
 		-- rawset(self, argCount, dispatcher)
 		self[argCount] = dispatcher

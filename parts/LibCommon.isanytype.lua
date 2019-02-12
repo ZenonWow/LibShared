@@ -11,6 +11,28 @@ local type,select = type,select
 
 
 -----------------------------
+--- LibCommon.istype2(value, t1, t2):  Test if value is one of 2 types.
+-- @param value - any value to test
+-- @param t1..t2 - names of accepted types
+-- @return value if its type is accepted,  otherwise nil
+--
+LibCommon.istype2 = LibCommon.istype2 or  function(value, t1, t2)
+	local t=type(value)  ;  if t==t1 or t==t2 then return value end  ;  return nil
+end
+
+
+-----------------------------
+--- LibCommon.istype3(value, t1, t2, t3):  Test if value is one of 3 types.
+-- @param value - any value to test
+-- @param t1..t3 - names of accepted types
+-- @return value if its type is accepted,  otherwise nil
+--
+LibCommon.istype3 = LibCommon.istype3 or  function(value, t1, t2, t3)
+	local t=type(value)  ;  if t==t1 or t==t2 or t==t3 then return value end  ;  return nil
+end
+
+
+-----------------------------
 --- LibCommon.isanytype(value, t1, t2, t3, ...):  Test if value is one of 3 (or more) types.
 -- @param value - any value to test
 -- @param t1..t* - names of accepted types

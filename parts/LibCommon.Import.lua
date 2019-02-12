@@ -1,8 +1,6 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
 local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
--- assert(LibCommon and LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
--- LibCommon.Require.isstring
 assert(LibCommon and LibCommon.isstring, 'Include "LibCommon.istype.lua" before.')
 
 
@@ -30,21 +28,19 @@ local ipairs,unpack,strsplit,type = ipairs,unpack,string.split,type
 -- @throw if missing and not optional:  an error including client name or caller's filename.
 --
 -- Using LibCommon.Revisions to identify mock implementation.
--- LibCommon.Require.Revisions
--- if LibCommon.Revisions.Import == 0  then  LibCommon.Import = nil  end
+-- LibCommon.Require.Revisions.Import == 0  then  LibCommon.Import = nil  end
 -- rawset(LibCommon.Revisions, 'Import', 1)
 --
 -- Using LibCommon.Upgrade to override mock implementation.
 -- local IMPORT_REVISION = 1
--- LibCommon.Require.Upgrade
--- LibCommon.Upgrade.Import[IMPORT_REVISION] = function(_namespace, features, client, optional, stackdepth)
+-- LibCommon.Require.Upgrade.Import[IMPORT_REVISION] = function(_namespace, features, client, optional, stackdepth)
 
 -- Check for mock implementation and drop it.
 if LibCommon.Import and  not LibCommon:Import("Import", "LibCommon.Import", true)  then  LibCommon.Import = nil  end
 
 
 LibCommon.Import = LibCommon.Import or  function(_namespace, features, client, optional, stackdepth)
-	local list, impls, missing = strsplit(", ", features), { n = 0 }
+	local list, impls, missing = { strsplit(", ", features) }, { n = 0 }, nil
 	for  i,feature  in ipairs(list) do  if feature ~= "" then
 		impls.n, impl = impls.n + 1, _namespace[feature]
 		impls[impls.n] = impl

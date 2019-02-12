@@ -61,7 +61,7 @@ LibCommon.initmetatable = LibCommon.initmetatable or  function(obj, setFields)
 		meta = setFields or {}
 		setmetatable(obj, meta)
 	end
-	return meta  end
+	return meta
 end
 
 --[[ One-liner.

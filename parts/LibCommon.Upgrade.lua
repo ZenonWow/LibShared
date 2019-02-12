@@ -1,11 +1,8 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
 local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
-assert(LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
-LibCommon.Require.DefineTable
-LibCommon.Require.UpgradeFunction
-LibCommon.Require.UpgradeObject
-LibCommon.Require.initmetatable
+-- assert(LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
+-- LibCommon.Import("DefineTable,UpgradeFunction,UpgradeObject,initmetatable")
 
 -- GLOBALS:
 -- Used from _G:  error, tostring
@@ -105,19 +102,22 @@ if not LibCommon.Upgrade then
 	-- UpgradeProxy metatable
 
 	function UpgradeProxyMeta.__newindex(UpgradeProxy, newversion, newimpl)
-		local feature, UpgradeProxy._upgradedFeature  =  UpgradeProxy._upgradedFeature, nil
+		local feature = UpgradeProxy._upgradedFeature
+		UpgradeProxy._upgradedFeature = nil
 		return LibCommon:UpgradeFunction(feature, newversion, newimpl)
 	end
 
 	function UpgradeProxyMeta.__call(UpgradeProxy, newversion, upgradeObject)
-		local feature, UpgradeProxy._upgradedFeature  =  UpgradeProxy._upgradedFeature, nil
+		local feature = UpgradeProxy._upgradedFeature
+		UpgradeProxy._upgradedFeature = nil
 		if upgradeObject == true or UpgradeProxy._asObject then  return LibCommon:UpgradeObject(feature, newversion, upgradeObject)  end
 		return LibCommon:UpgradeFunction(feature, newversion)
 	end
 
 	-- UpgradeProxyMeta.__index    = UpgradeProxyMeta.__call
 	function UpgradeProxyMeta.__index(UpgradeProxy, newversion)
-		local feature, UpgradeProxy._upgradedFeature  =  UpgradeProxy._upgradedFeature, nil
+		local feature = UpgradeProxy._upgradedFeature
+		UpgradeProxy._upgradedFeature = nil
 		_G.error("Usage: LibCommon.Upgrade."..feature.."("..newversion..") - use function call instead of indexing with version.")
   end
 

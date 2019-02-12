@@ -25,6 +25,7 @@ elseif not LibCommon.safecallDynamic then
 	-- Avoiding tailcall: errorhandler() function would show up as "?" in stacktrace, making it harder to understand.
 	LibCommon.errorhandler = LibCommon.errorhandler or  function(errorMessage)  return true and _G.geterrorhandler()(errorMessage)  end
 	local errorhandler = LibCommon.errorhandler
+	local xpcall = _G.xpcall
 	
 	-- softassert(condition, message):  Report error without halting.
 	LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
