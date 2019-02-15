@@ -1,14 +1,13 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
 local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
--- assert(LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
--- LibCommon.Import("DefineTable,UpgradeFunction,UpgradeObject,initmetatable")
+assert(LibCommon.initmetatable, 'Include "LibCommon.initmetatable.lua" before.')
 
 -- GLOBALS:
--- Used from _G:  error, tostring
--- Used from LibCommon:  Require, DefineTable  (only for init)
--- Used from LibCommon:  UpgradeFunction, UpgradeObject, initmetatable
 -- Exported to LibCommon:  Upgrade
+-- Used from LibCommon:  initmetatable  (only for init)
+-- Used from LibCommon:  UpgradeFunction, UpgradeObject
+-- Used from _G:  error, tostring
 
 
 -----------------------------
@@ -47,25 +46,26 @@ if Upgrade then
 --
 local oldversion = LibCommon.Revisions.Upgrade
 if oldversion < FEATURE_VERSION then
-	local Upgrade = LibCommon.DefineTable.Upgrade
+	local Upgrade = LibCommon.InitTable.Upgrade
 	LibCommon.Revisions.Upgrade = FEATURE_VERSION
 --
 if LibCommon.Revisions.Upgrade < FEATURE_VERSION then
-	local Upgrade = LibCommon.DefineTable.Upgrade
+	local Upgrade = LibCommon.InitTable.Upgrade
 	LibCommon.Revisions.Upgrade = FEATURE_VERSION
 --
-if not LibCommon.Has.Upgrade then
-	local Upgrade = LibCommon.DefineTable.Upgrade
+if not LibCommon.Upgrade then
+	local Upgrade = LibCommon.InitTable.Upgrade
 --]]
 
 
 if not LibCommon.Upgrade then
-	local Upgrade = LibCommon.DefineTable.Upgrade
+	local Upgrade = LibCommon.Upgrade or {}
+	LibCommon.Upgrade = Upgrade
 
 	-- Upvalued Lua globals:
 	-- local setmetatable = setmetatable
 
-	local initmetatable = LibCommon.Require.initmetatable
+	local initmetatable = LibCommon.initmetatable
 
 	local UpgradeMeta = initmetatable(Upgrade)
 	-- initsubtable(UpgradeMeta)._UpgradeProxy

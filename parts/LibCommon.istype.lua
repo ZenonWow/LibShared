@@ -27,6 +27,7 @@ local istype,isstring,isnumber,istable,isfunc = LibCommon:Import("istype,isstrin
 -- @return value  if its type is as expected,  false otherwise.
 --
 if not LibCommon.istype then
+
 	--- LibCommon. istype(value, typename):  @return true if type of `value` is `typeName`
 	LibCommon.istype    = LibCommon.istype    or function(value, typename)   return  type(value)==typename   and value  end
 	--- LibCommon. isfunc(value):        @return true if type of `value` is 'function'
@@ -35,9 +36,31 @@ if not LibCommon.istype then
 	LibCommon.isnumber  = LibCommon.isnumber  or function(value)  return  type(value)=='number'   and value  end
 	LibCommon.istable   = LibCommon.istable   or function(value)  return  type(value)=='table'    and value  end
 	LibCommon.isfunc    = LibCommon.isfunc    or function(value)  return  type(value)=='function' and value  end
-	-- thread == coroutine
+	--- LibCommon.isthread(value):  @return true if `value` is a coroutine
 	-- LibCommon.isthread = LibCommon.isthread or function(value)  return  type(value)=='thread'   and value  end
-end
 
+
+	-----------------------------
+	--- LibCommon.istype2(value, t1, t2):  Test if value is one of 2 types.
+	-- @param value - any value to test
+	-- @param t1..t2 - names of accepted types
+	-- @return value if its type is accepted,  otherwise nil
+	--
+	LibCommon.istype2 = LibCommon.istype2 or  function(value, t1, t2)
+		local t=type(value)  ;  if t==t1 or t==t2 then return value end  ;  return nil
+	end
+
+
+	-----------------------------
+	--- LibCommon.istype3(value, t1, t2, t3):  Test if value is one of 3 types.
+	-- @param value - any value to test
+	-- @param t1..t3 - names of accepted types
+	-- @return value if its type is accepted,  otherwise nil
+	--
+	LibCommon.istype3 = LibCommon.istype3 or  function(value, t1, t2, t3)
+		local t=type(value)  ;  if t==t1 or t==t2 or t==t3 then return value end  ;  return nil
+	end
+
+end
 
 

@@ -1,14 +1,12 @@
 local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
 local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
--- assert(LibCommon.Require, 'Include "LibCommon.Require.lua" before.')
--- LibCommon.Require.Revisions
-assert(LibCommon.Revisions, 'Include "LibCommon.Define.lua" before.')
+assert(LibCommon.Revisions, 'Include "LibCommon.Revisions.lua" before.')
 
 -- GLOBALS:
 -- Used from _G:  DEVMODE, geterrorhandler
--- Used from LibCommon:  Revisions
--- Exported to LibCommon:  UpgradeObject, [softassert]
+-- Used from LibCommon:  Revisions, [softassert (in DEVMODE)]
+-- Exported to LibCommon:  UpgradeObject
 
 -- Upvalued Lua globals:
 local rawset,type = rawset,type
@@ -42,7 +40,5 @@ LibCommon.UpgradeObject = LibCommon.UpgradeObject or  function(LibCommon, featur
 		return value, oldversion
 	end
 end
-
-LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
 
 

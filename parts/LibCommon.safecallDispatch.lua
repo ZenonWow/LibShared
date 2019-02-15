@@ -1,29 +1,27 @@
--- Export  LibCommon.safecallDispatch, softassert
+local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
+-- local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+
+-- GLOBALS:
+-- Used from _G:  GetBuildInfo, geterrorhandler, table.concat, assert, loadstring  (ca. 5 times)
+-- Used from LibCommon:  [softassert]
+-- Exported to LibCommon:  safecall, safecallDispatch, errorhandler, softassert
 
 
 -------------------------------------------
--- safecall(unsafeFunc, arg1, arg2, ...)
+--- LibCommon.  safecallDispatch(unsafeFunc, arg1, arg2, ...)
 --
 -- Similar to pcall(unsafeFunc, arg1, arg2, ...)
 -- with proper errorhandler while executing unsafeFunc.
-
-
-----------------------------------------
---- Battle For Azeroth Addon Changes
--- https://us.battle.net/forums/en/wow/topic/20762318007
--- • xpcall now accepts arguments like pcall does
 --
-if  select(4, GetBuildInfo()) >= 80000  then
+if not LibCommon.safecallDispatch then
 
-	LibCommon.safecall = LibCommon.safecall or  function(unsafeFunc, ...)  return xpcall(unsafeFunc, errorhandler, ...)  end
-
-elseif not LibCommon.safecallDispatch then
+	-- Upvalued Lua globals
+	local xpcall,type,select = xpcall,type,select
 
 	-- Allow hooking _G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
-	-- Avoiding tailcall: errorhandler() function would show up as "?" in stacktrace, making it harder to understand.
+	-- Avoid tailcall:  errorhandler() function would show up as "?" in stacktrace, making it harder to understand.
 	LibCommon.errorhandler = LibCommon.errorhandler or  function(errorMessage)  return true and _G.geterrorhandler()(errorMessage)  end
 	local errorhandler = LibCommon.errorhandler
-	local xpcall = _G.xpcall
 
 
 	local SafecallDispatchers = {}
@@ -47,7 +45,6 @@ elseif not LibCommon.safecallDispatch then
 		sourcecode = sourcecode:gsub("ARGS", _G.table.concat(ARGS, ","))
 		local creator = _G.assert(_G.loadstring(sourcecode, "SafecallDispatchers[argCount="..argCount.."]"))
 		local dispatcher = creator(xpcall, errorhandler)
-		-- rawset(self, argCount, dispatcher)
 		self[argCount] = dispatcher
 		return dispatcher
 	end
@@ -62,8 +59,6 @@ elseif not LibCommon.safecallDispatch then
 		--return xpcall(unsafeFunc, _G.geterrorhandler())
 	end
 
-	-- softassert(condition, message):  Report error without halting.
-	LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
 
 	function LibCommon.safecallDispatch(unsafeFunc, ...)
 		-- we check to see if unsafeFunc is actually a function here and don't error when it isn't
@@ -80,12 +75,14 @@ elseif not LibCommon.safecallDispatch then
 		return dispatcher(unsafeFunc, ...)
 	end
 
+
+	-- softassert(condition, message):  Report error without halting.
+	LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+
 end -- LibCommon.safecallDispatch
 
 
 
-
 LibCommon.safecall = LibCommon.safecall or LibCommon.safecallDispatch
-
 
 

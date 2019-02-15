@@ -1,32 +1,73 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-<!-- # Baseline, using .Define: -->
-<Script  file="LibCommon.Define.lua" />
-<Script  file="LibCommon.istype.lua" />
+
+<!-- # Baseline -->
+
+<!-- # Used from LibCommon: -->
 <Script  file="LibCommon.softassert.lua" />
+<Script  file="LibCommon.istype.lua" />
+
+
+<!-- # Metaprogramming -->
+
+<!-- # Used from LibCommon: -->
 <Script  file="LibCommon.initmetatable.lua" />
-<Script  file="LibCommon.safecallDispatch.lua" />
-<Script  file="LibCommon.safecallDynamic.lua" />
+<!-- # Used from LibCommon: -->
 <Script  file="LibCommon.AutoTablesMeta.lua" />
 
-<!-- # Import-export, using .Require: -->
-<Script  file="LibCommon.Require.lua" />
-<Script  file="LibCommon.Import.lua" />
 
-<!-- # Upgrade, using .Require, .Versions: -->
+<!-- # Revisions for LibCommon features -->
+
+<!-- # Used from LibCommon: -->
+<Script  file="LibCommon.Revisions.lua" />
+<!-- # Used from LibCommon:  Revisions -->
 <Script  file="LibCommon.UpgradeFunction.lua" />
+<!-- # Used from LibCommon:  Revisions, [softassert (in DEVMODE)] -->
 <Script  file="LibCommon.UpgradeObject.lua" />
+<!-- # Used from LibCommon:  initmetatable, UpgradeFunction, UpgradeObject -->
 <Script  file="LibCommon.Upgrade.lua" />
 
-<!-- # Specialized features, using .Define: -->
-<Script  file="LibCommon.isanytype.lua" />
-<Script  file="LibCommon.iscallable.lua" />
+
+<!-- # Init, Import -->
+
+<!-- # Used from LibCommon: -->
+<Script  file="LibCommon.Init.lua" />
+<Script  file="LibCommon.InitTable.lua" />
+<Script  file="LibCommon.Require.lua" />
+<!-- # Used from LibCommon:  isstring -->
+<Script  file="LibCommon.Import.lua" />
+
+
+<!-- # Common table operations -->
+
+<!-- # Used from LibCommon: -->
 <Script  file="LibCommon.indexOf.lua" />
+<Script  file="LibCommon.merge.lua" />
 <Script  file="LibCommon.pairsOrNil.lua" />
 <Script  file="LibCommon.pairsOrOne.lua" />
-<Script  file="LibCommon.debugfilename.lua" />
 
-<!-- # Conclusion, using .Define, .initmetatable: -->
+
+<!-- # Error protection: safecall(). Order matters, first one to load will be the chosen implementation. -->
+
+<!-- # Used from LibCommon: -->
+<!-- <Script  file="LibCommon.safecallBfa.lua" /> -->
+<!-- # Used from LibCommon: [softassert] -->
+<Script  file="LibCommon.safecallDispatch.lua" />
+<Script  file="LibCommon.safecallDynamic.lua" />
+
+
+<!-- # Specialized features -->
+
+<!-- # Used from LibCommon: -->
+<Script  file="LibCommon.debugfilename.lua" />
+<Script  file="LibCommon.isanytype.lua" />
+<Script  file="LibCommon.iscallable.lua" />
+
+
+<!-- # Conclusion -->
+
+<!-- # Used from LibCommon:  initmetatable (only for init) -->
 <Script  file="LibCommon.revision.lua" />
+
 
 </Ui>
