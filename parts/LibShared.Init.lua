@@ -1,7 +1,7 @@
 local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
-local LIBSHARED_REVISION = 1
+local LIBSHARED_REVISION = 10
 -- Check if full library with same or higher revision is already loaded.
 if (LibShared.revision or 0) >= LIBSHARED_REVISION then  return  end
 
