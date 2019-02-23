@@ -1,20 +1,20 @@
-local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:
--- Used from LibCommon:
--- Exported to LibCommon:  iscallable, iscallobj
+-- Used from LibShared:
+-- Exported to LibShared:  iscallable, iscallobj
 
 -- Upvalued Lua globals:
 local type,getmetatable = type,getmetatable
 
 
 -----------------------------
---- LibCommon.iscallable(value):  Test if value can be called like a function.
+--- LibShared.iscallable(value):  Test if value can be called like a function.
 -- @param value - any value to test
 -- @return value if value if a function or an object with __call defined in its metatable
-LibCommon.iscallable = LibCommon.iscallable or  function(value, notFunction)
+LibShared.iscallable = LibShared.iscallable or  function(value, notFunction)
 	local t = type(value)
 	if t=='function' then  return not notFunction and value  end
 	if t~='table' and t~='userdata' then  return false  end
@@ -25,13 +25,13 @@ end
 
 
 -----------------------------
---- LibCommon.iscallobj(value):  Test if value is a table that can be called like a function.
+--- LibShared.iscallobj(value):  Test if value is a table that can be called like a function.
 -- @param value - any value to test
 -- @return value if value has a metatable with __call function
--- LibCommon.iscallobj = LibCommon.iscallobj or  function(value)  return LibCommon.iscallable(value, true)  end
+-- LibShared.iscallobj = LibShared.iscallobj or  function(value)  return LibShared.iscallable(value, true)  end
 
 --[[
-LibCommon.iscallobj = LibCommon.iscallobj or  function(value)
+LibShared.iscallobj = LibShared.iscallobj or  function(value)
 	local t = type(value)
 	if t~='table' and t~='userdata' then  return  false  end
 	local meta = getmetatable(value)

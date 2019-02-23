@@ -1,27 +1,27 @@
-local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
--- local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+-- local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  GetBuildInfo, geterrorhandler, table.concat, assert, loadstring  (ca. 5 times)
--- Used from LibCommon:  [softassert]
--- Exported to LibCommon:  safecall, safecallDispatch, errorhandler, softassert
+-- Used from LibShared:  [softassert]
+-- Exported to LibShared:  safecall, safecallDispatch, errorhandler, softassert
 
 
 -------------------------------------------
---- LibCommon.  safecallDispatch(unsafeFunc, arg1, arg2, ...)
+--- LibShared.  safecallDispatch(unsafeFunc, arg1, arg2, ...)
 --
 -- Similar to pcall(unsafeFunc, arg1, arg2, ...)
 -- with proper errorhandler while executing unsafeFunc.
 --
-if not LibCommon.safecallDispatch then
+if not LibShared.safecallDispatch then
 
 	-- Upvalued Lua globals
 	local xpcall,type,select = xpcall,type,select
 
 	-- Allow hooking _G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
 	-- Avoid tailcall:  errorhandler() function would show up as "?" in stacktrace, making it harder to understand.
-	LibCommon.errorhandler = LibCommon.errorhandler or  function(errorMessage)  return true and _G.geterrorhandler()(errorMessage)  end
-	local errorhandler = LibCommon.errorhandler
+	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  return true and _G.geterrorhandler()(errorMessage)  end
+	local errorhandler = LibShared.errorhandler
 
 
 	local SafecallDispatchers = {}
@@ -60,13 +60,13 @@ if not LibCommon.safecallDispatch then
 	end
 
 
-	function LibCommon.safecallDispatch(unsafeFunc, ...)
+	function LibShared.safecallDispatch(unsafeFunc, ...)
 		-- we check to see if unsafeFunc is actually a function here and don't error when it isn't
 		-- this safecall is used for optional functions like OnInitialize OnEnable etc. When they are not
 		-- present execution should continue without hinderance
 		if  not unsafeFunc  then  return  end
 		if  type(unsafeFunc)~='function'  then
-			LibCommon.softassert(false, "Usage: safecall(unsafeFunc):  function expected, got "..type(unsafeFunc))
+			LibShared.softassert(false, "Usage: safecall(unsafeFunc):  function expected, got "..type(unsafeFunc))
 			return
 		end
 
@@ -76,13 +76,13 @@ if not LibCommon.safecallDispatch then
 	end
 
 
-	--- LibCommon. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
-	LibCommon.softassert = LibCommon.softassert  or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+	--- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
+	LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
 
-end -- LibCommon.safecallDispatch
+end -- LibShared.safecallDispatch
 
 
 
-LibCommon.safecall = LibCommon.safecall or LibCommon.safecallDispatch
+LibShared.safecall = LibShared.safecall or LibShared.safecallDispatch
 
 

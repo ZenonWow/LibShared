@@ -1,10 +1,10 @@
-local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  tostring, geterrorhandler
--- Used from LibCommon:
--- Exported to LibCommon:  Revisions
+-- Used from LibShared:
+-- Exported to LibShared:  Revisions
 
 -- Localized Lua globals:  (used only in "main chunk", not in functions, therefore not upvalued)
 local setmetatable = setmetatable
@@ -14,19 +14,19 @@ local setmetatable = setmetatable
 
 --[[ Copy-paste usage:
 -- Upgrade a feature:
-if LibCommon.Revisions.MyFeature < FEATURE_VERSION then
+if LibShared.Revisions.MyFeature < FEATURE_VERSION then
   local MyFeature = ..
-	LibCommon.Upgrade.MyFeature[FEATURE_VERSION] = MyFeature
+	LibShared.Upgrade.MyFeature[FEATURE_VERSION] = MyFeature
 end
 --]]
 
 
 
 -----------------------------
--- LibCommon.Revisions.<feature> == defined version of LibCommon.<feature>  or 0 if present, but no version defined  or -1 if not present.
+-- LibShared.Revisions.<feature> == defined version of LibShared.<feature>  or 0 if present, but no version defined  or -1 if not present.
 --
-LibCommon.Revisions = LibCommon.Revisions  or setmetatable({ _namespace = LibCommon }, {
-	__newindex = function(Revisions, feature, newvalue)  _G.geterrorhandler()("To define a versioned feature use:  LibCommon.Upgrade.".._G.tostring(feature).."[newversion] = ..")  end,
+LibShared.Revisions = LibShared.Revisions  or setmetatable({ _namespace = LibShared }, {
+	__newindex = function(Revisions, feature, newvalue)  _G.geterrorhandler()("To define a versioned feature use:  LibShared.Upgrade.".._G.tostring(feature).."[newversion] = ..")  end,
 	__index    = function(Revisions, feature)  return  Revisions._namespace[feature]  and  0  or  -1  end,
 })
 

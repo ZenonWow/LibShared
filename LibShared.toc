@@ -1,5 +1,5 @@
 ## Interface: 50400
-## Title: Lib: Common functions
+## Title: Lib: Shared common functions
 ## Author: Ace3 Development Team
 ## X-Website: http://www.wowace.com
 ## X-Category: Library
@@ -9,6 +9,6 @@
 ## OptionalDeps:
 
 
-# LibCommon-all.lua
+# LibShared-all.lua
 parts\all.xml
 

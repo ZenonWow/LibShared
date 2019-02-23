@@ -1,10 +1,10 @@
-local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler, tostring
--- Used from LibCommon:
--- Exported to LibCommon:  InitDeep
+-- Used from LibShared:
+-- Exported to LibShared:  InitDeep
 
 -- Localized Lua globals:  (used only in "main chunk", not in functions, therefore not upvalued)
 local setmetatable = setmetatable
@@ -16,21 +16,21 @@ local type = type
 
 --[[ Copy-paste usage:
 -- Recursive table creation:
-LibCommon.InitDeep(LibUnhook).RawHooks[LibStub].NewLibrary[hookOwner] = hooks.UpdateSpec
+LibShared.InitDeep(LibUnhook).RawHooks[LibStub].NewLibrary[hookOwner] = hooks.UpdateSpec
 --]]
 
 
 
 -----------------------------
---- LibCommon.InitDeep.<feature> = <Feature>
+--- LibShared.InitDeep.<feature> = <Feature>
 --
--- Initialize subtables, like LibCommon.InitTable, but multi-level, and set a value at the far end.
---  LibCommon.InitDeep(RootTable).SubTable1.SubTable2.SubTable3.valueDeepInATree = ..
+-- Initialize subtables, like LibShared.InitTable, but multi-level, and set a value at the far end.
+--  LibShared.InitDeep(RootTable).SubTable1.SubTable2.SubTable3.valueDeepInATree = ..
 -- Just initialize the tables and return the last, without setting a field value:
---  local subSubSubTable = LibCommon.InitDeep(RootTable).SubTable1.SubTable2.SubTable3()
---  LibCommon.InitDeep(RootTable).SubTable1.SubTable2.SubTable3()
+--  local subSubSubTable = LibShared.InitDeep(RootTable).SubTable1.SubTable2.SubTable3()
+--  LibShared.InitDeep(RootTable).SubTable1.SubTable2.SubTable3()
 --
-if  not LibCommon.InitDeep  then
+if  not LibShared.InitDeep  then
 
 	local function checkTable(proxy)
 		local node = proxy._currentNode
@@ -41,7 +41,7 @@ if  not LibCommon.InitDeep  then
 		elseif type(node)~='table' then
 			-- Current table node is primitive/literal value, not a table.
 			-- Report only once per InitDeep().
-			if node ~= nil then  _G.geterrorhandler()("LibCommon.InitDeep traversed to a non-table value in field '".._G.tostring(proxy._parentKey).."' value '".._G.tostring(proxy._currentNode).."'.")  end
+			if node ~= nil then  _G.geterrorhandler()("LibShared.InitDeep traversed to a non-table value in field '".._G.tostring(proxy._parentKey).."' value '".._G.tostring(proxy._currentNode).."'.")  end
 			wipe(proxy)
 			return false
 		end
@@ -84,7 +84,7 @@ if  not LibCommon.InitDeep  then
 
 	InitDeepMeta.proxy = setmetatable({}, InitDeepMeta)
 
-	LibCommon.InitDeep = LibCommon.InitDeep or function(rootTable)
+	LibShared.InitDeep = LibShared.InitDeep or function(rootTable)
 		InitDeepMeta.proxy._currentNode = rootTable
 		return InitDeepMeta.proxy
 	end

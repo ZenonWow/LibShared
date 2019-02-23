@@ -1,16 +1,16 @@
-local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
-local LIBCOMMON_REVISION = 1
+local LIBSHARED_REVISION = 1
 -- Check if full library with same or higher revision is already loaded.
-if (LibCommon.revision or 0) >= LIBCOMMON_REVISION then  return  end
+if (LibShared.revision or 0) >= LIBSHARED_REVISION then  return  end
 
-LibCommon.name = LibCommon.name or LIBCOMMON_NAME
+LibShared.name = LibShared.name or LIBSHARED_NAME
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler, tostring
--- Used from LibCommon:
--- Exported to LibCommon:  Init
+-- Used from LibShared:
+-- Exported to LibShared:  Init
 
 -- Localized Lua globals:  (used only in "main chunk", not in functions, therefore not upvalued)
 local setmetatable = setmetatable
@@ -21,24 +21,24 @@ local setmetatable = setmetatable
 
 --[[ Copy-paste usage:
 -- Shared function loaded from first definition:
-LibCommon.Init.MyFeature = function()  ..  end
+LibShared.Init.MyFeature = function()  ..  end
 --]]
 
 
 
 -----------------------------
---- LibCommon.Init.<feature> = <Feature>
--- Initializes LibCommon.<feature> if it's undefined.
+--- LibShared.Init.<feature> = <Feature>
+-- Initializes LibShared.<feature> if it's undefined.
 --
 -- For longer initialization check if feature is missing:
---  if not LibCommon.<feature> then  ..  end
+--  if not LibShared.<feature> then  ..  end
 -- For one-liners:
---  LibCommon.Init.<feature> = not LibCommon.<feature>  and  ..
+--  LibShared.Init.<feature> = not LibShared.<feature>  and  ..
 --
-if  not LibCommon.Init  or  LibCommon.Init == LibCommon  then
+if  not LibShared.Init  or  LibShared.Init == LibShared  then
 
-	LibCommon.Init = LibCommon.Init  or setmetatable({ _inTable = LibCommon }, {
-		__index = function(Init, feature)  _G.geterrorhandler()("Usage:  LibCommon.Init.".._G.tostring(feature).." = .." )  end,
+	LibShared.Init = LibShared.Init  or setmetatable({ _inTable = LibShared }, {
+		__index = function(Init, feature)  _G.geterrorhandler()("Usage:  LibShared.Init.".._G.tostring(feature).." = .." )  end,
 		__newindex = function(Init, feature, firstvalue)
 			if Init._inTable[feature] then  return  end
 			Init._inTable[feature] = firstvalue

@@ -1,9 +1,9 @@
-local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
--- Exported to LibCommon:  initmetatable, initmetatableFields, setmetatableFields, initmetatableField
--- Used from LibCommon:
+-- Exported to LibShared:  initmetatable, initmetatableFields, setmetatableFields, initmetatableField
+-- Used from LibShared:
 -- Used from _G:
 
 -- Upvalued Lua globals:
@@ -11,14 +11,14 @@ local type,getmetatable,setmetatable = type,getmetatable,setmetatable
 
 
 --[[ Copy-paste import code:
-local initmetatable = LibCommon.Require.initmetatable
+local initmetatable = LibShared.Require.initmetatable
 -- TODO: example
 --]]
 
 
 
 -----------------------------
---- LibCommon. initmetatable(obj):  Make sure obj has a metatable and return it.
+--- LibShared. initmetatable(obj):  Make sure obj has a metatable and return it.
 -- @return metatable of obj, or nil if protected and hidden.
 --
 -- If obj has a protected and hidden metatable, it will return nil.
@@ -33,7 +33,7 @@ local initmetatable = LibCommon.Require.initmetatable
 -- Non-Lua: local function initmetatable(obj)  return  getmetatable(obj) or ( setmetatable(obj, local mt={}) ; return mt )  end
 -- Non-Lua: local function initmetatable(obj)  return  getmetatable(obj) else { let mt={} ; setmetatable(obj, mt) ; return mt }  end
 --
-LibCommon.initmetatable = LibCommon.initmetatable or function(obj, default)
+LibShared.initmetatable = LibShared.initmetatable or function(obj, default)
 	local meta = getmetatable(obj)
 	if meta == nil then
 		meta = default or {}
@@ -45,7 +45,7 @@ LibCommon.initmetatable = LibCommon.initmetatable or function(obj, default)
 end
 
 --[[ One long-liner.
-LibCommon.initmetatable = LibCommon.initmetatable or function(obj, default)
+LibShared.initmetatable = LibShared.initmetatable or function(obj, default)
 	local meta = getmetatable(obj) ; if meta == nil then  meta = default or {} ; setmetatable(obj, meta)  elseif type(meta)~='table' then  meta = nil  end ; return meta
 end
 --]]
@@ -53,7 +53,7 @@ end
 
 
 -----------------------------
---- LibCommon. initmetatableFields(obj, setFields):  Initialize fields in the metatable.
+--- LibShared. initmetatableFields(obj, setFields):  Initialize fields in the metatable.
 -- @param setFields (table) - fields to initialize. Won't overwrite values.
 -- @return obj
 -- --@return metatable of obj, or nil if protected and hidden.
@@ -61,8 +61,8 @@ end
 -- Safely initialize the metatable (merges new fields into the metatable, does nothing if protected and hidden):
 --  initmetatableFields(obj, { __index = .. , __newindex = .. })
 --
-LibCommon.initmetatableFields = LibCommon.initmetatableFields or function(obj, setFields)
-	local meta = LibCommon.initmetatable(obj, setFields)
+LibShared.initmetatableFields = LibShared.initmetatableFields or function(obj, setFields)
+	local meta = LibShared.initmetatable(obj, setFields)
 	if meta and meta~=setFields then
 		for k,v in pairs(setFields) do  meta[k] = meta[k] or v  end
 	end
@@ -72,7 +72,7 @@ end
 
 
 -----------------------------
---- LibCommon. setmetatableFields(obj, setFields):  Overwrite fields in the metatable.
+--- LibShared. setmetatableFields(obj, setFields):  Overwrite fields in the metatable.
 -- @param setFields (table) - fields to set.
 -- @return obj
 -- --@return metatable of obj, or nil if protected and hidden.
@@ -80,8 +80,8 @@ end
 -- Safely update the metatable (merges the fields into the metatable, does nothing if protected and hidden):
 --  setmetatableFields(obj, { __index = .. , __newindex = .. })
 --
-LibCommon.setmetatableFields = LibCommon.setmetatableFields or function(obj, setFields)
-	local meta = LibCommon.initmetatable(obj, setFields)
+LibShared.setmetatableFields = LibShared.setmetatableFields or function(obj, setFields)
+	local meta = LibShared.initmetatable(obj, setFields)
 	if meta and meta~=setFields then
 		for k,v in pairs(setFields) do  meta[k] = v  end
 	end
@@ -91,14 +91,14 @@ end
 
 
 -----------------------------
---- LibCommon. initmetatableField(obj, fieldName, initValue):  Initialize obj's metatable and initialize (set if nil) field to initValue.
+--- LibShared. initmetatableField(obj, fieldName, initValue):  Initialize obj's metatable and initialize (set if nil) field to initValue.
 -- @param fieldName (string)  name of field to initialize.
 -- @param initValue  default value of field.
 -- @return metatable of obj.
 --
 -- If obj has a hidden/protected metatable, it will return a string or false or any other type.
 -- If the objects are from an unknown source then check for protected metatable:
---  local meta = initmetatable(obj) ; if LibCommon.istable(meta) then  ..  end
+--  local meta = initmetatable(obj) ; if LibShared.istable(meta) then  ..  end
 -- Safely initialize the metatable (skips if protected):
 --  initmetatable(obj, { __index = .. , __newindex = .. })
 -- If the objects are internal, shorthands can be used safely:
@@ -108,8 +108,8 @@ end
 -- Non-Lua: local function initmetatable(obj)  return  getmetatable(obj) or ( setmetatable(obj, local mt={}) ; return mt )  end
 -- Non-Lua: local function initmetatable(obj)  return  getmetatable(obj) else { let mt={} ; setmetatable(obj, mt) ; return mt }  end
 --
-LibCommon.initmetatableField = LibCommon.initmetatableField or function(obj, fieldName, initValue)
-	local meta = LibCommon.initmetatable(obj)
+LibShared.initmetatableField = LibShared.initmetatableField or function(obj, fieldName, initValue)
+	local meta = LibShared.initmetatable(obj)
 	if  meta  and  meta[fieldName] == nil  then  meta[fieldName] = initValue  end
 	return meta, obj
 end

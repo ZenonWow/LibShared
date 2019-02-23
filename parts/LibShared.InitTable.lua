@@ -1,10 +1,10 @@
-local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  tostring
--- Used from LibCommon:
--- Exported to LibCommon:  InitTable
+-- Used from LibShared:
+-- Exported to LibShared:  InitTable
 
 -- Localized Lua globals:  (used only in "main chunk", not in functions, therefore not upvalued)
 local setmetatable = setmetatable
@@ -15,7 +15,7 @@ local setmetatable = setmetatable
 
 --[[ Copy-paste usage:
 -- Shared table created at first definition:
-local MyFeatureTable = LibCommon.InitTable.MyFeatureTable
+local MyFeatureTable = LibShared.InitTable.MyFeatureTable
 MyFeatureTable.<field> = MyFeatureTable.<field> or ..
 --]]
 
@@ -23,9 +23,9 @@ MyFeatureTable.<field> = MyFeatureTable.<field> or ..
 
 --[[
 -----------------------------
-LibCommon.InitTable = LibCommon.InitTable  or setmetatable({ _inTable = LibCommon }, {
+LibShared.InitTable = LibShared.InitTable  or setmetatable({ _inTable = LibShared }, {
 	__newindex = function(InitTable, feature, newvalue)
-		return _G.geterrorhandler()("Usage:  local SharedTable = LibCommon.InitTable.".._G.tostring(feature) )
+		return _G.geterrorhandler()("Usage:  local SharedTable = LibShared.InitTable.".._G.tostring(feature) )
 	end,
 	__index    = function(InitTable, feature)
 		local value = InitTable._inTable[feature]
@@ -41,17 +41,17 @@ LibCommon.InitTable = LibCommon.InitTable  or setmetatable({ _inTable = LibCommo
 
 -----------------------------
 -- Initialize a table.
---  local SharedTable = LibCommon.InitTable.SharedTable
--- @return  nil  if  LibCommon.SharedTable has a non-table value.
+--  local SharedTable = LibShared.InitTable.SharedTable
+-- @return  nil  if  LibShared.SharedTable has a non-table value.
 -- Same as:
---  local SharedTable = LibCommon.InitDeep.SharedTable()
+--  local SharedTable = LibShared.InitDeep.SharedTable()
 -- .. without the function call and the possibility to traverse multiple levels.
 --
-if not LibCommon.InitTable then
+if not LibShared.InitTable then
 
 	local InitTableMeta = {
 		__newindex = function(InitTable, feature, newvalue)
-			_G.geterrorhandler()("Usage:  local SharedTable = LibCommon.InitTable.".._G.tostring(feature) )
+			_G.geterrorhandler()("Usage:  local SharedTable = LibShared.InitTable.".._G.tostring(feature) )
 		end,
 		__index    = function(InitTable, feature)
 			local value = InitTable._inTable[feature]
@@ -67,8 +67,8 @@ if not LibCommon.InitTable then
 	end
 	InitTableMeta.proxyObject = setmetatable({}, InitTableMeta)
 
-	LibCommon.InitTable = LibCommon.InitTable  or setmetatable({ _inTable = LibCommon }, InitTableMeta)
+	LibShared.InitTable = LibShared.InitTable  or setmetatable({ _inTable = LibShared }, InitTableMeta)
 
-end -- if not LibCommon.InitTable
+end -- if not LibShared.InitTable
 
 

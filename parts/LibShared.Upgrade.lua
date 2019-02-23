@@ -1,31 +1,31 @@
-local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
-local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
+local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
-assert(LibCommon.initmetatable, 'Include "LibCommon.initmetatable.lua" before.')
+assert(LibShared.initmetatable, 'Include "LibShared.initmetatable.lua" before.')
 
 -- GLOBALS:
--- Exported to LibCommon:  Upgrade
--- Used from LibCommon:  initmetatable  (only for init)
--- Used from LibCommon:  UpgradeFunction, UpgradeObject
+-- Exported to LibShared:  Upgrade
+-- Used from LibShared:  initmetatable  (only for init)
+-- Used from LibShared:  UpgradeFunction, UpgradeObject
 -- Used from _G:  error, tostring
 
 
 -----------------------------
---- Declare an upgrade to LibCommon.<feature>.
--- Overwrites the registered version of  LibCommon.<feature>.
+--- Declare an upgrade to LibShared.<feature>.
+-- Overwrites the registered version of  LibShared.<feature>.
 -- If newvalue is not provided, then it's the caller's task to actually replace the feature.
 -- Usage alternatives:
 -- 
--- LibCommon.Upgrade.<feature>[newversion] = newvalue
+-- LibShared.Upgrade.<feature>[newversion] = newvalue
 -- 
--- if  LibCommon.Upgrade.<feature>(newversion)  then
+-- if  LibShared.Upgrade.<feature>(newversion)  then
 --   local Feature = ..
---   LibCommon.Upgrade.<feature>[newversion] = Feature
+--   LibShared.Upgrade.<feature>[newversion] = Feature
 -- end
 -- 
--- local oldversion = LibCommon.Upgrade.<feature>(newversion)
+-- local oldversion = LibShared.Upgrade.<feature>(newversion)
 -- if oldversion then
---   LibCommon.Upgrade.<feature>[newversion] = Feature
+--   LibShared.Upgrade.<feature>[newversion] = Feature
 -- end
 -- 
 -- @return nil if current implementation is up-to-date,  or the replaced oldversion if it needs upgrading.
@@ -36,36 +36,36 @@ local FEATURE_NAME, FEATURE_VERSION = 'Upgrade', 1
 
 
 --[[ Alternative exists-checks:
-local oldversion, Upgrade = LibCommon:UpgradeFunction(FEATURE_NAME, FEATURE_VERSION)
+local oldversion, Upgrade = LibShared:UpgradeFunction(FEATURE_NAME, FEATURE_VERSION)
 if oldversion then
 	local Upgrade = Upgrade or {}
-	LibCommon:UpgradeFunction(FEATURE_NAME, FEATURE_VERSION, Upgrade)
+	LibShared:UpgradeFunction(FEATURE_NAME, FEATURE_VERSION, Upgrade)
 --
-local Upgrade, oldversion = LibCommon:UpgradeObject(FEATURE_NAME, FEATURE_VERSION)
+local Upgrade, oldversion = LibShared:UpgradeObject(FEATURE_NAME, FEATURE_VERSION)
 if Upgrade then
 --
-local oldversion = LibCommon.Revisions.Upgrade
+local oldversion = LibShared.Revisions.Upgrade
 if oldversion < FEATURE_VERSION then
-	local Upgrade = LibCommon.InitTable.Upgrade
-	LibCommon.Revisions.Upgrade = FEATURE_VERSION
+	local Upgrade = LibShared.InitTable.Upgrade
+	LibShared.Revisions.Upgrade = FEATURE_VERSION
 --
-if LibCommon.Revisions.Upgrade < FEATURE_VERSION then
-	local Upgrade = LibCommon.InitTable.Upgrade
-	LibCommon.Revisions.Upgrade = FEATURE_VERSION
+if LibShared.Revisions.Upgrade < FEATURE_VERSION then
+	local Upgrade = LibShared.InitTable.Upgrade
+	LibShared.Revisions.Upgrade = FEATURE_VERSION
 --
-if not LibCommon.Upgrade then
-	local Upgrade = LibCommon.InitTable.Upgrade
+if not LibShared.Upgrade then
+	local Upgrade = LibShared.InitTable.Upgrade
 --]]
 
 
-if not LibCommon.Upgrade then
-	local Upgrade = LibCommon.Upgrade or {}
-	LibCommon.Upgrade = Upgrade
+if not LibShared.Upgrade then
+	local Upgrade = LibShared.Upgrade or {}
+	LibShared.Upgrade = Upgrade
 
 	-- Upvalued Lua globals:
 	-- local setmetatable = setmetatable
 
-	local initmetatable = LibCommon.initmetatable
+	local initmetatable = LibShared.initmetatable
 
 	local UpgradeMeta = initmetatable(Upgrade)
 	-- initsubtable(UpgradeMeta)._UpgradeProxy
@@ -75,15 +75,15 @@ if not LibCommon.Upgrade then
 	local UpgradeProxyMeta = initmetatable(UpgradeProxy)
 
 
-	-- LibCommon.Upgrade 's metatable
+	-- LibShared.Upgrade 's metatable
 
-	--- LibCommon.Upgrade.<feature> = ..  modification disallowed.
+	--- LibShared.Upgrade.<feature> = ..  modification disallowed.
 	function UpgradeMeta.__newindex(Upgrade, feature, value)
-		_G.error("Do not modify LibCommon.Upgrade.".._G.tostring(feature).." directly. Usage: LibCommon.Upgrade.<feature>[newversion] = function ... end")
+		_G.error("Do not modify LibShared.Upgrade.".._G.tostring(feature).." directly. Usage: LibShared.Upgrade.<feature>[newversion] = function ... end")
 	end
 
-	--- LibCommon.Upgrade.<feature>:  Initiate declaring an upgrade to LibCommon.<feature>
-	-- @return a version-checking proxy for LibCommon.<feature>
+	--- LibShared.Upgrade.<feature>:  Initiate declaring an upgrade to LibShared.<feature>
+	-- @return a version-checking proxy for LibShared.<feature>
 	-- Stores the feature name for the next  UpgradeProxy[newversion]
 	function UpgradeMeta.__index(Upgrade, feature)
 		UpgradeProxy._asObject = nil
@@ -104,24 +104,24 @@ if not LibCommon.Upgrade then
 	function UpgradeProxyMeta.__newindex(UpgradeProxy, newversion, newimpl)
 		local feature = UpgradeProxy._upgradedFeature
 		UpgradeProxy._upgradedFeature = nil
-		return LibCommon:UpgradeFunction(feature, newversion, newimpl)
+		return LibShared:UpgradeFunction(feature, newversion, newimpl)
 	end
 
 	function UpgradeProxyMeta.__call(UpgradeProxy, newversion, upgradeObject)
 		local feature = UpgradeProxy._upgradedFeature
 		UpgradeProxy._upgradedFeature = nil
-		if upgradeObject == true or UpgradeProxy._asObject then  return LibCommon:UpgradeObject(feature, newversion, upgradeObject)  end
-		return LibCommon:UpgradeFunction(feature, newversion)
+		if upgradeObject == true or UpgradeProxy._asObject then  return LibShared:UpgradeObject(feature, newversion, upgradeObject)  end
+		return LibShared:UpgradeFunction(feature, newversion)
 	end
 
 	-- UpgradeProxyMeta.__index    = UpgradeProxyMeta.__call
 	function UpgradeProxyMeta.__index(UpgradeProxy, newversion)
 		local feature = UpgradeProxy._upgradedFeature
 		UpgradeProxy._upgradedFeature = nil
-		_G.error("Usage: LibCommon.Upgrade."..feature.."("..newversion..") - use function call instead of indexing with version.")
+		_G.error("Usage: LibShared.Upgrade."..feature.."("..newversion..") - use function call instead of indexing with version.")
   end
 
 
-end -- LibCommon.Upgrade
+end -- LibShared.Upgrade
 
 
