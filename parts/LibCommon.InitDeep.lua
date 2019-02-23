@@ -33,38 +33,50 @@ LibCommon.InitDeep(LibUnhook).RawHooks[LibStub].NewLibrary[hookOwner] = hooks.Up
 if  not LibCommon.InitDeep  then
 
 	local function checkTable(proxy)
-		if type(proxy._inTable)~='table' then
-			-- Current table node is primitive/literal value, not a table.  Report only once per InitDeep().
-			if proxy._inTable then  _G.geterrorhandler()("LibCommon.InitDeep traversed to a non-table value in field '"..proxy._parentKey.."' value '".._G.tostring(proxy._inTable).."'.")  end
-			proxy._inTable = nil
+		local node = proxy._currentNode
+		if  node == nil  and  proxy._parentTable  then
+			node = {}
+			proxy._currentNode = node
+			proxy._parentTable[proxy._parentKey] = node
+		elseif type(node)~='table' then
+			-- Current table node is primitive/literal value, not a table.
+			-- Report only once per InitDeep().
+			if node ~= nil then  _G.geterrorhandler()("LibCommon.InitDeep traversed to a non-table value in field '".._G.tostring(proxy._parentKey).."' value '".._G.tostring(proxy._currentNode).."'.")  end
+			wipe(proxy)
 			return false
 		end
-		return true
+		return node
 	end
 
 	local InitDeepMeta = {
 		__call = function(proxy)
 			-- End of line, return current table.
-			local lastValue = proxy._inTable
+			local lastNode = proxy._currentNode
+			-- Init the last node as a table if it was unset.
+			if lastNode == nil then  lastNode = checkTable(proxy)  end
 			wipe(proxy)  -- Reset for next InitDeep().
-			return lastValue
+			return lastNode
 		end,
 		__index = function(proxy, feature)
 			if not checkTable(proxy) then  return nil  end
-			local newroot = proxy._inTable[feature]
-			if newroot == nil then
-				newroot = {}
-				proxy._inTable[feature] = newroot
+			local newnode = proxy._currentNode[feature]
+			--[[
+			if newnode == nil then
+				newnode = {}
+				proxy._currentNode[feature] = newnode
 			end
-			-- proxy._parentTable, proxy._parentKey = proxy._inTable, feature
+			--]]
+			proxy._parentTable = proxy._currentNode
 			proxy._parentKey = feature
-			proxy._inTable = newroot
+			proxy._currentNode = newnode
 		end,
 		__newindex = function(proxy, feature, firstvalue)
-			if not checkTable(proxy) then  return nil  end
-			if  proxy._inTable[feature] ~= nil  then  return  end
-			proxy._inTable[feature] = firstvalue
-			-- rawset(proxy._inTable, feature, firstvalue)
+			if firstvalue == nil then  return  end
+			local node = checkTable(proxy)
+			if not node then  return nil  end
+			if  node[feature] ~= nil  then  return  end
+			node[feature] = firstvalue
+			-- rawset(node, feature, firstvalue)
 			-- No reset: allow reusing the last proxy to add more fields, until the next InitDeep(). This might change.
 			-- wipe(proxy)
 		end,
@@ -73,7 +85,7 @@ if  not LibCommon.InitDeep  then
 	InitDeepMeta.proxy = setmetatable({}, InitDeepMeta)
 
 	LibCommon.InitDeep = LibCommon.InitDeep or function(rootTable)
-		InitDeepMeta.proxy._inTable = rootTable
+		InitDeepMeta.proxy._currentNode = rootTable
 		return InitDeepMeta.proxy
 	end
 

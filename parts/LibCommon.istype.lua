@@ -21,23 +21,33 @@ local istype,isstring,isnumber,istable,isfunc = LibCommon:Import("istype,isstrin
 
 
 -----------------------------
--- Type-check shorthands. Pick the ones you need.
--- As it returns the value it can be used to write compact checks, eg.:  textField:SetText( isstring(str) or "Wrong value" )
+-- Type-check shorthands.  @return value  if its type is as expected,  false otherwise.
 -- @param value  to check
--- @return value  if its type is as expected,  false otherwise.
+-- As it returns the value it can be used to write compact checks, eg.:  textField:SetText( isstring(str) or "Wrong value" )
 --
 if not LibCommon.istype then
 
-	--- LibCommon. istype(value, typename):  @return true if type of `value` is `typeName`
-	LibCommon.istype    = LibCommon.istype    or function(value, typename)   return  type(value)==typename   and value  end
-	--- LibCommon. isfunc(value):        @return true if type of `value` is 'function'
-	--- LibCommon. is<typename>(value):  @return true if type of `value` is <typeName>
-	LibCommon.isstring  = LibCommon.isstring  or function(value)  return  type(value)=='string'   and value  end
-	LibCommon.isnumber  = LibCommon.isnumber  or function(value)  return  type(value)=='number'   and value  end
-	LibCommon.istable   = LibCommon.istable   or function(value)  return  type(value)=='table'    and value  end
-	LibCommon.isfunc    = LibCommon.isfunc    or function(value)  return  type(value)=='function' and value  end
-	--- LibCommon.isthread(value):  @return true if `value` is a coroutine
-	-- LibCommon.isthread = LibCommon.isthread or function(value)  return  type(value)=='thread'   and value  end
+	--- LibCommon. istype(value, typename):  @return value if type of value is `typeName`
+	LibCommon.istype     = LibCommon.istype     or function(value, typename)   return  type(value)==typename   and value  end
+	LibCommon.ifnil      = LibCommon.ifnil      or function(value, default)    if value==nil then return default else return value end  end  -- retains false
+	LibCommon.ifelse     = LibCommon.ifelse     or function(check, go, nogo)   if check then return go else return nogo end  end
+  -- Conditional (ternary) operator missing from Lua.  Try:  check and false or nil  === nil always, only if can handle it, but if is a statement, and takes up a lot more space.
+  -- ifelse(check, false, nil)  ==  check ? false : null (C++)  ==  check then false else nil (Ceylon-lang)  ==  if (check) false else null (Kotlin-lang)  ==  if check { false } else { None } (Rust-lang)
+	-- LibCommon.iffalse    = LibCommon.iffalse    or function(value, default)    if value==false then return default else return value end  end  -- never used
+	--- LibCommon. isfunc(value):        @return value if value is a function
+	--- LibCommon. isthread(value):      @return value if value is a coroutine
+	--- LibCommon. isbool(value):        @return value if type of value is 'boolean'
+	--- LibCommon. is<typename>(value):  @return value if type of value is <typeName>
+	LibCommon.isstring   = LibCommon.isstring   or function(value)  return  type(value)=='string'   and value  end
+	LibCommon.isnumber   = LibCommon.isnumber   or function(value)  return  type(value)=='number'   and value  end
+	LibCommon.isbool     = LibCommon.isbool     or function(value)  return  type(value)=='boolean'  and value  end
+	LibCommon.istable    = LibCommon.istable    or function(value)  return  type(value)=='table'    and value  end
+	LibCommon.isuserdata = LibCommon.isuserdata or function(value)  return  type(value)=='userdata' and value  end
+	LibCommon.isfunc     = LibCommon.isfunc     or function(value)  return  type(value)=='function' and value  end
+	LibCommon.isthread   = LibCommon.isthread   or function(value)  return  type(value)=='thread'   and value  end
+	-- LibCommon.isnil      = LibCommon.isnil      or function(value)  return  type(value)=='nil'                 end  -- nil is also a type, but isnil is pointless
+
+	LibCommon.istablelike = LibCommon.istablelike or function(value)  local t=type(value)  ;  return t=='table' or t=='userdata'  end
 
 
 	-----------------------------

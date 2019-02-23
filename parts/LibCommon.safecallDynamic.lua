@@ -51,8 +51,8 @@ if not LibCommon.safecallDynamic then
 	end
 
 
-	-- softassert(condition, message):  Report error without halting.
-	LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+	--- LibCommon. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
+	LibCommon.softassert = LibCommon.softassert  or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
 
 end -- LibCommon.safecallDynamic
 

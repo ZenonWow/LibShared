@@ -41,7 +41,8 @@ LibCommon.OptFunc = LibCommon.OptFunc  or setmetatable({ _inTable = LibCommon },
 
 
 -- Dependency from LibCommon.softassert.lua:
-LibCommon.softassert = LibCommon.softassert or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+--- LibCommon. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
+LibCommon.softassert = LibCommon.softassert  or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
 
 
 -----------------------------

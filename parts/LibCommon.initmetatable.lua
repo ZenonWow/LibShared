@@ -2,7 +2,7 @@ local _G, LIBCOMMON_NAME  =  _G, LIBCOMMON_NAME or 'LibCommon'
 local LibCommon = _G[LIBCOMMON_NAME] or {}  ;  _G[LIBCOMMON_NAME] = LibCommon
 
 -- GLOBALS:
--- Exported to LibCommon:  initmetatable, initmetatableDefaults, initmetatableOverwrite, initmetatableField
+-- Exported to LibCommon:  initmetatable, initmetatableFields, setmetatableFields, initmetatableField
 -- Used from LibCommon:
 -- Used from _G:
 
@@ -41,7 +41,7 @@ LibCommon.initmetatable = LibCommon.initmetatable or function(obj, default)
 	elseif type(meta)~='table' then
 		meta = nil
 	end
-	return meta
+	return meta, obj
 end
 
 --[[ One long-liner.
@@ -53,37 +53,39 @@ end
 
 
 -----------------------------
---- LibCommon. initmetatableDefaults(obj, initFields):  Initialize fields in the metatable.
--- @param initFields (table) - fields to initialize. Won't overwrite values.
--- @return metatable of obj, or nil if protected and hidden.
+--- LibCommon. initmetatableFields(obj, setFields):  Initialize fields in the metatable.
+-- @param setFields (table) - fields to initialize. Won't overwrite values.
+-- @return obj
+-- --@return metatable of obj, or nil if protected and hidden.
 -- 
 -- Safely initialize the metatable (merges new fields into the metatable, does nothing if protected and hidden):
---  initmetatableDefaults(obj, { __index = .. , __newindex = .. })
+--  initmetatableFields(obj, { __index = .. , __newindex = .. })
 --
-LibCommon.initmetatableDefaults = LibCommon.initmetatableDefaults or function(obj, initFields)
-	local meta = LibCommon.initmetatable(obj, initFields)
-	if meta and meta~=initFields then
-		for k,v in pairs(initFields) do  meta[k] = meta[k] or v  end
+LibCommon.initmetatableFields = LibCommon.initmetatableFields or function(obj, setFields)
+	local meta = LibCommon.initmetatable(obj, setFields)
+	if meta and meta~=setFields then
+		for k,v in pairs(setFields) do  meta[k] = meta[k] or v  end
 	end
-	return meta
+	return meta, obj
 end
 
 
 
 -----------------------------
---- LibCommon. initmetatableOverwrite(obj, setFields):  Overwrite fields in the metatable.
+--- LibCommon. setmetatableFields(obj, setFields):  Overwrite fields in the metatable.
 -- @param setFields (table) - fields to set.
--- @return metatable of obj, or nil if protected and hidden.
+-- @return obj
+-- --@return metatable of obj, or nil if protected and hidden.
 --
 -- Safely update the metatable (merges the fields into the metatable, does nothing if protected and hidden):
---  initmetatableOverwrite(obj, { __index = .. , __newindex = .. })
+--  setmetatableFields(obj, { __index = .. , __newindex = .. })
 --
-LibCommon.initmetatableOverwrite = LibCommon.initmetatableOverwrite or function(obj, setFields)
+LibCommon.setmetatableFields = LibCommon.setmetatableFields or function(obj, setFields)
 	local meta = LibCommon.initmetatable(obj, setFields)
 	if meta and meta~=setFields then
 		for k,v in pairs(setFields) do  meta[k] = v  end
 	end
-	return meta
+	return meta, obj
 end
 
 
@@ -109,7 +111,7 @@ end
 LibCommon.initmetatableField = LibCommon.initmetatableField or function(obj, fieldName, initValue)
 	local meta = LibCommon.initmetatable(obj)
 	if  meta  and  meta[fieldName] == nil  then  meta[fieldName] = initValue  end
-	return meta
+	return meta, obj
 end
 
 
