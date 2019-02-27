@@ -28,10 +28,10 @@
 <Script  file="LibShared.Upgrade.lua" />
 
 
-<!-- # Init, Import -->
+<!-- # Define, Import -->
 
 <!-- # Used from LibShared: -->
-<Script  file="LibShared.Init.lua" />
+<Script  file="LibShared.Define.lua" />
 <Script  file="LibShared.InitTable.lua" />
 <Script  file="LibShared.Require.lua" />
 <!-- # Used from LibShared:  isstring -->

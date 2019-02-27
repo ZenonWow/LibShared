@@ -10,6 +10,11 @@ local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local format,error,type = string.format,error,type
 
 
+--[[ Copy-paste import code:
+asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject): `dataobject` - ")
+--]]
+
+
 -----------------------------
 --- errorf(...)     = assertf(false, ...)
 --- softerror(...)  = softassert(false, ...)
@@ -51,6 +56,8 @@ end
 -- @param value - to check for type.
 -- @param typename (string) - name of expected type.
 -- @param messagePrefix (string/nil) - optional error message prefixed to:  "<typename> expected, got <type>"
+--
+-- Usage:  asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject): `dataobject` - ")
 --
 LibShared.asserttype = LibShared.asserttype  or  function(value, typename, messagePrefix, calldepth)
 	if type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (calldepth or 1)+1 )  end

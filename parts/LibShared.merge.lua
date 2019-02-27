@@ -41,7 +41,7 @@ end
 --
 LibShared.mergeCurry = LibShared.mergeCurry or function(first)
 	-- Functional style:  partially apply first.
-	return  function(second) return LibShared.merge(first, second) end  end
+	return  function(second) return LibShared.merge(first, second) end
 end
 
 

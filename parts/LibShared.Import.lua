@@ -32,16 +32,18 @@ local ipairs,unpack,strsplit,type = ipairs,unpack,string.split,type
 --
 -- Using LibShared.Upgrade to override mock implementation.
 -- local IMPORT_REVISION = 1
--- LibShared.Require.Upgrade.Import[IMPORT_REVISION] = function(_fromTable, features, client, optional, stackdepth)
+-- LibShared.Require.Upgrade.Import[IMPORT_REVISION] = function(from, features, client, optional, stackdepth)
 --
-LibShared.Import = LibShared.Import or  function(_fromTable, features, client, optional, stackdepth)
+LibShared.Import = LibShared.Import or  function(from, features, client, optional, stackdepth)
+	LibShared.asserttype(from, 'table', "Usage: LibShared:Import(features, client): `LibShared:` - ")
+	LibShared.asserttype(features, 'string', "Usage: LibShared:Import(features, client): `features:` - ")
 	local names, list, missing = { strsplit(", ", features) }, { n = 0 }, nil
 	for  i,feature  in ipairs(names) do  if feature ~= "" then
-		list.n, value = list.n + 1, _fromTable[feature]
+		list.n, value = list.n + 1, from[feature]
 		list[list.n] = value
 		if not value then  missing =  missing  and  missing..", ."..feature  or  feature  end
 	end end  -- for if
-	if missing and not optional then  LibShared._Missing(_fromTable, missing, client, (stackdepth or 1)+1)  end
+	if missing and not optional then  LibShared._Missing(from, missing, client, (stackdepth or 1)+1)  end
 	return unpack(list, 1, list.n)
 end
 
@@ -51,13 +53,13 @@ end
 -- @param stackdepth  how deep the trouble is...  @see 2nd parameter of  error()
 -- @throw a "requires" error including client name or caller's filename.
 --
-LibShared._Missing = LibShared._Missing or  function(_fromTable, features, client, stackdepth)
+LibShared._Missing = LibShared._Missing or  function(from, features, client, stackdepth)
 	local isstring = LibShared.isstring
 	local clientname = isstring(client)
 		or  type(client)=='table' and ( isstring(client.name)  or  type(client.GetName)=='function' and client:GetName() )
 		or  "Executed code"
 	-- local clientname = _G.tostring( client or "Executed code" )
-	error( clientname..' requires "'..(isstring(_fromTable.name) or 'LibShared')..'.'..features..'" to be loaded before.' , (stackdepth or 1)+1 )
+	error( clientname..' requires "'..(isstring(from.name) or 'LibShared')..'.'..features..'" to be loaded before.' , (stackdepth or 1)+1 )
 end
 
 -- Dependency from LibShared.istype.lua:

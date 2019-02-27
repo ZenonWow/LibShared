@@ -86,8 +86,8 @@ if not LibShared.Upgrade then
 	-- @return a version-checking proxy for LibShared.<feature>
 	-- Stores the feature name for the next  UpgradeProxy[newversion]
 	function UpgradeMeta.__index(Upgrade, feature)
-		UpgradeProxy._asObject = nil
-		UpgradeProxy._upgradedFeature = feature
+		UpgradeProxyMeta._asObject = nil
+		UpgradeProxyMeta._upgradedFeature = feature
 		return UpgradeProxy
 		-- Alternative:  make a throw-away object at each use.
 		-- return setmetatable({ _upgradedFeature = feature }, UpgradeProxyMeta)
@@ -102,22 +102,22 @@ if not LibShared.Upgrade then
 	-- UpgradeProxy metatable
 
 	function UpgradeProxyMeta.__newindex(UpgradeProxy, newversion, newimpl)
-		local feature = UpgradeProxy._upgradedFeature
-		UpgradeProxy._upgradedFeature = nil
+		local feature = UpgradeProxyMeta._upgradedFeature
+		UpgradeProxyMeta._upgradedFeature = nil
 		return LibShared:UpgradeFunction(feature, newversion, newimpl)
 	end
 
 	function UpgradeProxyMeta.__call(UpgradeProxy, newversion, upgradeObject)
-		local feature = UpgradeProxy._upgradedFeature
-		UpgradeProxy._upgradedFeature = nil
-		if upgradeObject == true or UpgradeProxy._asObject then  return LibShared:UpgradeObject(feature, newversion, upgradeObject)  end
+		local feature = UpgradeProxyMeta._upgradedFeature
+		UpgradeProxyMeta._upgradedFeature = nil
+		if upgradeObject == true or UpgradeProxyMeta._asObject then  return LibShared:UpgradeObject(feature, newversion, upgradeObject)  end
 		return LibShared:UpgradeFunction(feature, newversion)
 	end
 
 	-- UpgradeProxyMeta.__index    = UpgradeProxyMeta.__call
 	function UpgradeProxyMeta.__index(UpgradeProxy, newversion)
-		local feature = UpgradeProxy._upgradedFeature
-		UpgradeProxy._upgradedFeature = nil
+		local feature = UpgradeProxyMeta._upgradedFeature
+		UpgradeProxyMeta._upgradedFeature = nil
 		_G.error("Usage: LibShared.Upgrade."..feature.."("..newversion..") - use function call instead of indexing with version.")
   end
 

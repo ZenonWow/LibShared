@@ -57,7 +57,7 @@ if not LibShared.istype then
 	-- @return value if its type is accepted,  otherwise nil
 	--
 	LibShared.istype2 = LibShared.istype2 or  function(value, t1, t2)
-		local t=type(value)  ;  if t==t1 or t==t2 then return value end  ;  return nil
+		local t=type(value)  ;  if t==t1 or t==t2 then return value or true end  ;  return nil
 	end
 
 
@@ -68,7 +68,7 @@ if not LibShared.istype then
 	-- @return value if its type is accepted,  otherwise nil
 	--
 	LibShared.istype3 = LibShared.istype3 or  function(value, t1, t2, t3)
-		local t=type(value)  ;  if t==t1 or t==t2 or t==t3 then return value end  ;  return nil
+		local t=type(value)  ;  if t==t1 or t==t2 or t==t3 then return value or true end  ;  return nil
 	end
 
 end
