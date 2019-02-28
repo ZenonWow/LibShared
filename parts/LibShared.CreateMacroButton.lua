@@ -34,6 +34,7 @@ LibShared.Define.CreateMacroButton = function(name, macrotext, label)
 	button:SetAttribute('macrotext', macrotext)
 	button.binding = 'CLICK '..name..':LeftButton'
 	if label then  _G['BINDING_NAME_'..button.binding] = label  end
+	return button
 end
 
 
