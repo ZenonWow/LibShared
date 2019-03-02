@@ -59,8 +59,8 @@ end
 --
 -- Usage:  asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject): `dataobject` - ")
 --
-LibShared.asserttype = LibShared.asserttype  or  function(value, typename, messagePrefix, calldepth)
-	if type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (calldepth or 1)+1 )  end
+LibShared.asserttype = LibShared.asserttype  or  function(value, typename, messagePrefix, callDepth)
+	if type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (callDepth or 0)+2 )  end
 end
 
 
@@ -70,8 +70,8 @@ end
 -- @param typename (string) - name of expected type.
 -- @param messagePrefix (string/nil) - optional error message prefixed to:  "<typename> expected, got <type>"
 --
-LibShared.asserttypeOrNil = LibShared.asserttypeOrNil  or  function(value, typename, messagePrefix, calldepth)
-	if nil~=value and type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (calldepth or 1)+1 )  end
+LibShared.asserttypeOrNil = LibShared.asserttypeOrNil  or  function(value, typename, messagePrefix, callDepth)
+	if nil~=value and type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (callDepth or 0)+2 )  end
 end
 
 
@@ -81,8 +81,8 @@ end
 -- @param typename (string) - name of expected type.
 -- @param messagePrefix (string/nil) - optional error message prefixed to:  "<typename> expected, got <type>"
 --
-LibShared.asserttypeOrFalse = LibShared.asserttypeOrFalse  or  function(value, typename, messagePrefix, calldepth)
-	if value and type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (calldepth or 1)+1 )  end
+LibShared.asserttypeOrFalse = LibShared.asserttypeOrFalse  or  function(value, typename, messagePrefix, callDepth)
+	if value and type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (callDepth or 0)+2 )  end
 end
 
 
@@ -92,8 +92,8 @@ end
 -- @param messageFormat - error message passed to  string.format(), then  error()  if condition fails.
 -- Stops execution if condition fails, like  assert().
 --
-LibShared.assertf = LibShared.assertf  or  function(ok, messageFormat, ...)  if not ok then  error( format(messageFormat, ...) )  end  end
-LibShared.assertnf = LibShared.assertnf  or  function(ok, calldepth, messageFormat, ...)  if not ok then  error( format(messageFormat, ...), calldepth+1 )  end  end
+LibShared.assertf = LibShared.assertf  or  function(ok, messageFormat, ...)  if not ok then  error( format(messageFormat, ...), 2 )  end  end
+LibShared.assertnf = LibShared.assertnf  or  function(ok, callDepth, messageFormat, ...)  if not ok then  error( format(messageFormat, ...), (callDepth or 0)+2 )  end  end
 
 
 
