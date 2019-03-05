@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
--- local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+-- local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler, table.concat, assert, loadstring  (ca. 5 times)
@@ -18,10 +18,10 @@ if not LibShared.safecallDispatch then
 	-- Upvalued Lua globals
 	local xpcall,type,select = xpcall,type,select
 
-	-- Allow hooking _G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
+	-- Allow hooking G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
 	-- Call through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
 	-- Also avoid tailcall with select(1,...). A tailcall would show LibShared.errorhandler() function as "?" in stacktrace, making it harder to identify.
-	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = _G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
+	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
 	local errorhandler = LibShared.errorhandler
 
 
@@ -43,8 +43,8 @@ if not LibShared.safecallDispatch then
 
 		local ARGS = {}
 		for i = 1, argCount do ARGS[i] = "a"..i end
-		sourcecode = sourcecode:gsub("ARGS", _G.table.concat(ARGS, ","))
-		local creator = _G.assert(_G.loadstring(sourcecode, "SafecallDispatchers[argCount="..argCount.."]"))
+		sourcecode = sourcecode:gsub("ARGS", G.table.concat(ARGS, ","))
+		local creator = G.assert(G.loadstring(sourcecode, "SafecallDispatchers[argCount="..argCount.."]"))
 		local dispatcher = creator(xpcall, errorhandler)
 		self[argCount] = dispatcher
 		return dispatcher
@@ -53,11 +53,11 @@ if not LibShared.safecallDispatch then
 	setmetatable(SafecallDispatchers, { __index = SafecallDispatchers.CreateDispatcher })
 
 	SafecallDispatchers[0] = function (unsafeFunc)
-		-- Pass a delegating errorhandler to avoid _G.geterrorhandler() function call before any error actually happens.
+		-- Pass a delegating errorhandler to avoid G.geterrorhandler() function call before any error actually happens.
 		return xpcall(unsafeFunc, errorhandler)
 		-- Or pass the registered errorhandler directly to avoid inserting an extra callstack frame.
 		-- The errorhandler is expected to be the same at both times: callbacks usually don't change it.
-		--return xpcall(unsafeFunc, _G.geterrorhandler())
+		--return xpcall(unsafeFunc, G.geterrorhandler())
 	end
 
 
@@ -78,7 +78,7 @@ if not LibShared.safecallDispatch then
 
 
 	--- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
-	LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+	LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or G.geterrorhandler()(message)  end
 
 end -- LibShared.safecallDispatch
 

@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
--- local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+-- local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  GetBuildInfo, geterrorhandler
@@ -19,15 +19,15 @@ local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 --
 -- Lua 5.2 was released on 16 Dec 2011, Bfa on 14 Aug 2018. After 7 years:  2 pages in 1 line.
 --
-if  not LibShared.safecall  and  _G.select(4, _G.GetBuildInfo()) >= 80000  then
+if  not LibShared.safecall  and  G.select(4, G.GetBuildInfo()) >= 80000  then
 
 	-- Upvalued Lua globals
 	local xpcall = xpcall
 
-	-- Allow hooking _G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
+	-- Allow hooking G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
 	-- Call through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
 	-- Also avoid tailcall with select(1,...). A tailcall would show LibShared.errorhandler() function as "?" in stacktrace, making it harder to identify.
-	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = _G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
+	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
 	local errorhandler = LibShared.errorhandler
 
 

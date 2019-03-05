@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler
@@ -21,7 +21,7 @@ LibShared.ImportMeta = LibShared.ImportMeta or  setmetatable({}, {
 		ImportMeta._fromTable[feature] = impl
 		return ImportMeta
 	end,
-	__newindex = function(ImportMeta, feature, newvalue)  _G.geterrorhandler()(false, "Do not modify LibShared.ImportMeta.".._G.tostring(feature))  end,
+	__newindex = function(ImportMeta, feature, newvalue)  G.geterrorhandler()(false, "Do not modify LibShared.ImportMeta."..G.tostring(feature))  end,
 	end,
 })
 

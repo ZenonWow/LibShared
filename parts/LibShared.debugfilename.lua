@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  debugstack
@@ -10,15 +10,15 @@ local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
 -----------------------------
 LibShared.debugfilename = LibShared.debugfilename  or function(stackdepth)
-	-- Allow hooking (replacing) _G.debugstack()
-	return _G.debugstack( (stackdepth or 1)+1, 3, 0):match( "\\(.-)[:>]")
+	-- Allow hooking (replacing) G.debugstack()
+	return G.debugstack( (stackdepth or 1)+1, 3, 0):match( "\\(.-)[:>]")
 end
 
 
 -----------------------------
 LibShared.debugfileline = LibShared.debugfileline  or function(stackdepth)
-	return _G.debugstack( (stackdepth or 1)+1, 3, 0):match([[\(.-:%d*[:>]?)]])
-	-- return _G.debugstack( (stackdepth or 1)+1, 3, 0):match([[\(.-:.-[:>])]])
+	return G.debugstack( (stackdepth or 1)+1, 3, 0):match([[\(.-:%d*[:>]?)]])
+	-- return G.debugstack( (stackdepth or 1)+1, 3, 0):match([[\(.-:.-[:>])]])
 end
 
 

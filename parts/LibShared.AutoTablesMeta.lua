@@ -1,8 +1,8 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
--- Used from _G:  setmetatable, error, 
+-- Used from _G:  setmetatable, error
 -- Used from LibShared:
 -- Exported to LibShared:  AutoTablesMeta, ConstEmptyTable
 -- Upvalued Lua globals:
@@ -26,6 +26,6 @@ LibShared.AutoTablesMeta = LibShared.AutoTablesMeta or { __index = function(self
 -----------------------------
 --- LibShared. ConstEmptyTable:  Constant empty table to use as a default table in places where nil would cause an error.
 --
-LibShared.ConstEmptyTable = LibShared.ConstEmptyTable  or _G.setmetatable({}, { __newindex = function()  _G.error("Can't add properties to the ConstEmptyTable.")  end, __metatable = "ConstEmptyTable is not to be modified." })
+LibShared.ConstEmptyTable = LibShared.ConstEmptyTable  or G.setmetatable({}, { __newindex = function()  G.error("Can't add properties to the ConstEmptyTable.")  end, __metatable = "ConstEmptyTable is not to be modified." })
 
 

@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
--- local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+-- local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler
@@ -20,10 +20,10 @@ if not LibShared.safecallDynamic then
 	-- Upvalued Lua globals
 	local xpcall,type,select,unpack = xpcall,type,select,unpack
 
-	-- Allow hooking _G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
+	-- Allow hooking G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
 	-- Call through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
 	-- Also avoid tailcall with select(1,...). A tailcall would show LibShared.errorhandler() function as "?" in stacktrace, making it harder to identify.
-	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = _G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
+	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
 	local errorhandler = LibShared.errorhandler
 	
 
@@ -48,12 +48,12 @@ if not LibShared.safecallDynamic then
 		-- Do the call through the closure.
 		-- Without parameters call the function directly.
 		return xpcall(xpcallClosure or unsafeFunc, errorhandler)
-		-- return xpcall(xpcallClosure or unsafeFunc, _G.geterrorhandler())
+		-- return xpcall(xpcallClosure or unsafeFunc, G.geterrorhandler())
 	end
 
 
 	--- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
-	LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+	LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or G.geterrorhandler()(message)  end
 
 end -- LibShared.safecallDynamic
 

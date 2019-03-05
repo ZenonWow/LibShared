@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 assert(LibShared.initmetatable, 'Include "LibShared.initmetatable.lua" before.')
 
@@ -79,7 +79,7 @@ if not LibShared.Upgrade then
 
 	--- LibShared.Upgrade.<feature> = ..  modification disallowed.
 	function UpgradeMeta.__newindex(Upgrade, feature, value)
-		_G.error("Do not modify LibShared.Upgrade.".._G.tostring(feature).." directly. Usage: LibShared.Upgrade.<feature>[newversion] = function ... end")
+		G.error("Do not modify LibShared.Upgrade."..G.tostring(feature).." directly. Usage: LibShared.Upgrade.<feature>[newversion] = function ... end")
 	end
 
 	--- LibShared.Upgrade.<feature>:  Initiate declaring an upgrade to LibShared.<feature>
@@ -118,7 +118,7 @@ if not LibShared.Upgrade then
 	function UpgradeProxyMeta.__index(UpgradeProxy, newversion)
 		local feature = UpgradeProxyMeta._upgradedFeature
 		UpgradeProxyMeta._upgradedFeature = nil
-		_G.error("Usage: LibShared.Upgrade."..feature.."("..newversion..") - use function call instead of indexing with version.")
+		G.error("Usage: LibShared.Upgrade."..feature.."("..newversion..") - use function call instead of indexing with version.")
   end
 
 

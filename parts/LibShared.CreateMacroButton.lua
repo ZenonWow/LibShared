@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 assert(LibShared.Define, 'Include "LibShared.Define.lua" before.')
 
@@ -33,7 +33,7 @@ LibShared.Define.CreateMacroButton = function(name, macrotext, label)
 	button:SetAttribute('type', 'macro')
 	button:SetAttribute('macrotext', macrotext)
 	button.binding = 'CLICK '..name..':LeftButton'
-	if label then  _G['BINDING_NAME_'..button.binding] = label  end
+	if label then  G['BINDING_NAME_'..button.binding] = label  end
 	return button
 end
 

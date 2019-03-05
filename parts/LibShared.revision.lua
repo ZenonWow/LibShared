@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 assert(LibShared.initmetatable, 'Include "LibShared.initmetatable.lua" before.')
 
@@ -22,11 +22,11 @@ if (LibShared.revision or 0) >= LIBSHARED_REVISION then  return  end
 LibShared.revision = LIBSHARED_REVISION
 LibShared.name = LibShared.name or LIBSHARED_NAME
 LibShared._metatable = LibShared.initmetatable(LibShared)
-LibShared._metatable.__tostring = function(LibShared)  return (LibShared.name or LIBSHARED_NAME).." (r".._G.tostring(LibShared.revision)..")"  end
+LibShared._metatable.__tostring = function(LibShared)  return (LibShared.name or LIBSHARED_NAME).." (r"..G.tostring(LibShared.revision)..")"  end
 
 --[[
-LibShared._metatable =  _G.getmetatable(LibShared)  or  LibShared._metatable  or  {}
-_G.setmetatable(LibShared, LibShared._metatable)
+LibShared._metatable =  G.getmetatable(LibShared)  or  LibShared._metatable  or  {}
+G.setmetatable(LibShared, LibShared._metatable)
 --]]
 
 

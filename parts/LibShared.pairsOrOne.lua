@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  ipairs, table, geterrorhandler
@@ -24,16 +24,16 @@ local inext = LibShared.Require.inext
 
 -----------------------------
 -- LibShared. inext() is the pair of next() that goes with ipairs()
-LibShared.inext = LibShared.inext  or  _G.ipairs({})
-_G.inext        = _G.inext  or LibShared.inext
+LibShared.inext = LibShared.inext  or  G.ipairs({})
+G.inext        = G.inext  or LibShared.inext
 local inext = LibShared.inext
 
 
 -----------------------------
 LibShared.tkeys   = LibShared.tkeys   or  function(t)	 local ks={} ; for k,_ in next,t,nil do  ks[#ks+1] = k  end ; return ks  end
 LibShared.tvalues = LibShared.tvalues or  function(t)  local vs={} ; for _,v in next,t,nil do  vs[#vs+1] = v  end ; return vs  end
-_G.table.keys = tkeys
-_G.table.values  = tvalues
+G.table.keys = tkeys
+G.table.values  = tvalues
 
 
 -----------------------------

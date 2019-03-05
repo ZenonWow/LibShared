@@ -1,7 +1,7 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
-if not LibShared.isstring and _G.DEVMODE then  _G.geterrorhandler()('Include "LibShared.istype.lua" before.')  end
+if not LibShared.isstring and G.DEVMODE then  G.geterrorhandler()('Include "LibShared.istype.lua" before.')  end
 
 
 -- GLOBALS:
@@ -58,7 +58,7 @@ LibShared._Missing = LibShared._Missing or  function(from, features, client, cal
 	local clientname = isstring(client)
 		or  type(client)=='table' and ( isstring(client.name)  or  type(client.GetName)=='function' and client:GetName() )
 		or  "Executed code"
-	-- local clientname = _G.tostring( client or "Executed code" )
+	-- local clientname = G.tostring( client or "Executed code" )
 	error( clientname..' requires "'..(isstring(from.name) or 'LibShared')..'.'..features..'" to be loaded before.' , (callDepth or 0)+2 )  -- error() requires +2 callDepth (one for itself...)
 end
 

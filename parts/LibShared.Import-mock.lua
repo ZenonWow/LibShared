@@ -11,7 +11,7 @@ LibShared.Import = LibShared.Import or  function(FromLib, features, client, opti
 	-- Importing only one feature (no list of features) that is present won't report an error as a convenience.
 	local value = LibShared[features]
 	if value then  return value  end
-	_G.geterrorhandler()(_G.tostring(client)..' requires "LibShared.Import" loaded before.')
+	G.geterrorhandler()(G.tostring(client)..' requires "LibShared.Import" loaded before.')
 end
 --]]
 

@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler, tostring
@@ -28,7 +28,7 @@ LibShared.Require.<feature>(..)
 --- local result = LibShared.OptFunc.<feature>(..)
 --
 LibShared.OptFunc = LibShared.OptFunc  or setmetatable({ _inTable = LibShared }, {
-	__newindex = function(OptFunc, feature, newvalue)  _G.geterrorhandler()("Usage:  local result = LibShared.OptFunc.".._G.tostring(feature).."(..)" )  end,
+	__newindex = function(OptFunc, feature, newvalue)  G.geterrorhandler()("Usage:  local result = LibShared.OptFunc."..G.tostring(feature).."(..)" )  end,
 	__index    = function(OptFunc, feature)
 		local value = OptFunc._inTable[feature]
 		if type(value)~='function' then
@@ -42,7 +42,7 @@ LibShared.OptFunc = LibShared.OptFunc  or setmetatable({ _inTable = LibShared },
 
 -- Dependency from LibShared.softassert.lua:
 --- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
-LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or G.geterrorhandler()(message)  end
 
 
 -----------------------------

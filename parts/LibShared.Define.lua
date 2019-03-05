@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 local LIBSHARED_REVISION = 10
 -- Check if full library with same or higher revision is already loaded.
@@ -38,7 +38,7 @@ LibShared.Define.MyFeature = function()  ..  end
 if  not LibShared.Define  or  LibShared.Define == LibShared  then
 
 	LibShared.Define = LibShared.Define  or setmetatable({ _namespace = LibShared }, {
-		__index = function(Define, feature)  _G.geterrorhandler()("Usage:  LibShared.Define.".._G.tostring(feature).." = .." )  end,
+		__index = function(Define, feature)  G.geterrorhandler()("Usage:  LibShared.Define."..G.tostring(feature).." = .." )  end,
 		__newindex = function(Define, feature, firstvalue)
 			if Define._namespace[feature] then  return  end
 			Define._namespace[feature] = firstvalue

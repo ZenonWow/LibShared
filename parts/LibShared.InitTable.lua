@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  tostring
@@ -25,7 +25,7 @@ MyFeatureTable.<field> = MyFeatureTable.<field> or ..
 -----------------------------
 LibShared.InitTable = LibShared.InitTable  or setmetatable({ _inTable = LibShared }, {
 	__newindex = function(InitTable, feature, newvalue)
-		return _G.geterrorhandler()("Usage:  local SharedTable = LibShared.InitTable.".._G.tostring(feature) )
+		return G.geterrorhandler()("Usage:  local SharedTable = LibShared.InitTable."..G.tostring(feature) )
 	end,
 	__index    = function(InitTable, feature)
 		local value = InitTable._inTable[feature]
@@ -51,7 +51,7 @@ if not LibShared.InitTable then
 
 	local InitTableMeta = {
 		__newindex = function(InitTable, feature, newvalue)
-			_G.geterrorhandler()("Usage:  local SharedTable = LibShared.InitTable.".._G.tostring(feature) )
+			G.geterrorhandler()("Usage:  local SharedTable = LibShared.InitTable."..G.tostring(feature) )
 		end,
 		__index    = function(InitTable, feature)
 			local value = InitTable._inTable[feature]

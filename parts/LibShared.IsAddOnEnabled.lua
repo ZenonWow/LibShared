@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  UnitName
@@ -29,7 +29,7 @@ end
 --
 LibShared.IsAddOnEnabled = LibShared.IsAddOnEnabled or  function(addonName)
 	-- Patch 6.0.2 (Wod) added GetAddOnEnableState() == 0/1/2, 0 == disabled, 1 == enabled for some characters (when playerName == nil), 2 == enabled
-	if GetAddOnEnableState then  return  0 ~= GetAddOnEnableState( _G.UnitName('player'), addonName )  end
+	if GetAddOnEnableState then  return  0 ~= GetAddOnEnableState( G.UnitName('player'), addonName )  end
 	-- Until 5.4.8 (Mop) there was an extra `enabled` return before loadable.
 	local name, title, notes, enabled, loadable, reason, security, newVersion = GetAddOnInfo(addonName)
 	return enabled

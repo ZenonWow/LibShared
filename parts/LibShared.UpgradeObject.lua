@@ -1,5 +1,5 @@
-local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
-local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
+local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 assert(LibShared.Revisions, 'Include "LibShared.Revisions.lua" before.')
 
@@ -26,7 +26,7 @@ LibShared.UpgradeObject = LibShared.UpgradeObject or  function(LibShared, featur
 		local value = LibShared[feature]
 
 		if type(value)~='table' then
-			if value and _G.DEVMODE then  LibShared.softassert(false, "Warn: LibShared:UpgradeObject("..feature..", "..newversion.."):  Upgraded feature is not a table, but a "..type(value) )  end
+			if value and G.DEVMODE then  LibShared.softassert(false, "Warn: LibShared:UpgradeObject("..feature..", "..newversion.."):  Upgraded feature is not a table, but a "..type(value) )  end
 			value = {}
 			LibShared[feature] = value
 			-- rawset(LibShared, feature, value)
