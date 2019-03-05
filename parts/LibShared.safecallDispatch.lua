@@ -2,7 +2,7 @@ local _G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 -- local LibShared = _G[LIBSHARED_NAME] or {}  ;  _G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
--- Used from _G:  GetBuildInfo, geterrorhandler, table.concat, assert, loadstring  (ca. 5 times)
+-- Used from _G:  geterrorhandler, table.concat, assert, loadstring  (ca. 5 times)
 -- Used from LibShared:  [softassert]
 -- Exported to LibShared:  safecall, safecallDispatch, errorhandler, softassert
 
@@ -19,8 +19,9 @@ if not LibShared.safecallDispatch then
 	local xpcall,type,select = xpcall,type,select
 
 	-- Allow hooking _G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
-	-- Avoid tailcall:  errorhandler() function would show up as "?" in stacktrace, making it harder to understand.
-	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  return true and _G.geterrorhandler()(errorMessage)  end
+	-- Call through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
+	-- Also avoid tailcall with select(1,...). A tailcall would show LibShared.errorhandler() function as "?" in stacktrace, making it harder to identify.
+	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = _G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
 	local errorhandler = LibShared.errorhandler
 
 
