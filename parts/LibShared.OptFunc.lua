@@ -1,6 +1,8 @@
 local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
+G.assert(LibShared.softassert, 'Include "LibShared.softassert.lua" before.')
+
 -- GLOBALS:
 -- Used from _G:  geterrorhandler, tostring
 -- Used from LibShared:
@@ -39,10 +41,6 @@ LibShared.OptFunc = LibShared.OptFunc  or setmetatable({ _inTable = LibShared },
 	end,
 })
 
-
--- Dependency from LibShared.softassert.lua:
---- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
-LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or G.geterrorhandler()(message)  end
 
 
 -----------------------------

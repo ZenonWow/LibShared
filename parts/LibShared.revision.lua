@@ -1,7 +1,7 @@
 local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
-assert(LibShared.initmetatable, 'Include "LibShared.initmetatable.lua" before.')
+G.assert(LibShared.initmetatable, 'Include "LibShared.initmetatable.lua" before.')
 
 local LIBSHARED_REVISION = 10
 -- Check if full library with same or higher revision is already loaded.

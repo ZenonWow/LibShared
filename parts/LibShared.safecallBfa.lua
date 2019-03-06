@@ -2,9 +2,9 @@ local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 -- local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
--- Used from _G:  GetBuildInfo, geterrorhandler
--- Used from LibShared:
--- Exported to LibShared:  safecall, safecallDynamic, safecallDispatch, errorhandler
+-- Used from _G:  GetBuildInfo, assert
+-- Used from LibShared:  errorhandler
+-- Exported to LibShared:  safecall, safecallDynamic, safecallDispatch
 
 
 -------------------------------------------
@@ -23,12 +23,8 @@ if  not LibShared.safecall  and  G.select(4, G.GetBuildInfo()) >= 80000  then
 
 	-- Upvalued Lua globals
 	local xpcall = xpcall
-
-	-- Allow hooking G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
-	-- Call through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
-	-- Also avoid tailcall with select(1,...). A tailcall would show LibShared.errorhandler() function as "?" in stacktrace, making it harder to identify.
-	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
-	local errorhandler = LibShared.errorhandler
+	-- Used from LibShared:
+	local errorhandler = G.assert(LibShared.errorhandler, 'Include "LibShared.softassert.lua" before.')
 
 
 	LibShared.safecall = function(unsafeFunc, ...)

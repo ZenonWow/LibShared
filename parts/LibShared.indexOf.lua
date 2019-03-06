@@ -4,8 +4,9 @@ local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 -- GLOBALS:
 -- Used from _G:
 -- Used from LibShared:
--- Exported to LibShared:  indexOf, indexOfN
+-- Exported to LibShared:  indexOf, indexOfN, removeFirst
 -- Upvalued Lua globals:
+local remove = G.table.remove
 
 
 --[[ Copy-paste import code:
@@ -35,6 +36,20 @@ end
 --
 LibShared.indexOfN = LibShared.indexOfN or function(t, item, N)
 	local last = t and (N or t.n or #t) or 0  ;  for i = 1,last do  if t[i] == item then  return i  end  return nil  end
+end
+
+
+
+-----------------------------
+--- LibShared. removeFirst(array, item):  Remove first occurence of item from array.
+-- @param array  a table used as an array  or nil/false is also accepted.
+-- @param item  to remove from the array.
+-- @return first index of item in array, if found,  nil otherwise.
+--
+LibShared.removeFirst = LibShared.removeFirst or function(t, item)
+	local idx = LibShared.indexOf(t, item)
+	if idx then  remove(t, idx)  end
+	return idx
 end
 
 

@@ -2,8 +2,8 @@ local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
--- Used from _G:  geterrorhandler, tostring
--- Used from LibShared:
+-- Used from _G:  tostring
+-- Used from LibShared:  errorhandler
 -- Exported to LibShared:  InitDeep
 
 -- Localized Lua globals:  (used only in "main chunk", not in functions, therefore not upvalued)
@@ -41,7 +41,7 @@ if  not LibShared.InitDeep  then
 		elseif type(node)~='table' then
 			-- Current table node is primitive/literal value, not a table.
 			-- Report only once per InitDeep().
-			if node ~= nil then  G.geterrorhandler()("LibShared.InitDeep traversed to a non-table value in field '"..G.tostring(proxy._parentKey).."' value '"..G.tostring(proxy._currentNode).."'.")  end
+			if node ~= nil then  LibShared.errorhandler("LibShared.InitDeep traversed to a non-table value in field '"..G.tostring(proxy._parentKey).."' value '"..G.tostring(proxy._currentNode).."'.")  end
 			wipe(proxy)
 			return false
 		end

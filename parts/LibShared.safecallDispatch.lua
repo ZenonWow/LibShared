@@ -17,12 +17,8 @@ if not LibShared.safecallDispatch then
 
 	-- Upvalued Lua globals
 	local xpcall,type,select = xpcall,type,select
-
-	-- Allow hooking G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
-	-- Call through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
-	-- Also avoid tailcall with select(1,...). A tailcall would show LibShared.errorhandler() function as "?" in stacktrace, making it harder to identify.
-	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
-	local errorhandler = LibShared.errorhandler
+	-- Used from LibShared:
+	local errorhandler = G.assert(LibShared.errorhandler, 'Include "LibShared.softassert.lua" before.')
 
 
 	local SafecallDispatchers = {}
@@ -72,13 +68,9 @@ if not LibShared.safecallDispatch then
 		end
 
 		local dispatcher = SafecallDispatchers[select('#',...)]
-		-- Can't avoid tailcall without inefficiently packing and unpacking the multiple return values.
-		return dispatcher(unsafeFunc, ...)
+		-- Avoid tailcall with select(1,...).
+		return select( 1, dispatcher(unsafeFunc, ...) )
 	end
-
-
-	--- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
-	LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or G.geterrorhandler()(message)  end
 
 end -- LibShared.safecallDispatch
 

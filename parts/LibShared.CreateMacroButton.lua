@@ -1,7 +1,7 @@
 local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
-assert(LibShared.Define, 'Include "LibShared.Define.lua" before.')
+G.assert(LibShared.Define, 'Include "LibShared.Define.lua" before.')
 
 -- GLOBALS:
 -- Used from _G:

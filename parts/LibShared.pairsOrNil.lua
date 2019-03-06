@@ -1,6 +1,8 @@
 local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
+G.assert(LibShared.softassert, 'Include "LibShared.softassert.lua" before.')
+
 -- GLOBALS:
 -- Used from _G:  ipairs
 -- Used from LibShared:
@@ -29,7 +31,7 @@ local nonext = LibShared.nonext
 --
 LibShared.pairsOrNil = LibShared.pairsOrNil  or  function(t)
   if type(t)=='table' then  return next ,t,nil
-  elseif t then G.geterrorhandler()("pairsOrNil(t) expected table or nil, got "..type(t))
+  elseif t then LibShared.softassert(false, "pairsOrNil(t) expected table or nil, got "..type(t))
 	end
   return nonext,t,nil
 end
@@ -40,7 +42,7 @@ end
 --
 LibShared.ipairsOrNil = LibShared.ipairsOrNil  or  function(t)
   if type(t)=='table' then  return inext,t,0
-	elseif t then G.geterrorhandler()("ipairsOrNil(t) expected table or nil, got "..type(t))
+	elseif t then LibShared.softassert(false, "ipairsOrNil(t) expected table or nil, got "..type(t))
 	end
   return nonext,t,nil
 end
@@ -50,8 +52,8 @@ end
 --[[ One-liners.
 local function nonext(t,i)     return nil,nil  end
 LibShared.nonext      = LibShared.nonext       or  nonext
-LibShared.pairsOrNil  = LibShared.pairsOrNil   or  function(t)  if type(t)=='table' then  return next ,t,nil  elseif t then G.geterrorhandler()("pairsOrNil(t) expected table or nil, got "..type(t)) end  return nonext,t,nil  end
-LibShared.ipairsOrNil = LibShared.ipairsOrNil  or  function(t)  if type(t)=='table' then  return inext,t,0   elseif t then G.geterrorhandler()("ipairsOrNil(t) expected table or nil, got "..type(t)) end  return nonext,t,nil  end
+LibShared.pairsOrNil  = LibShared.pairsOrNil   or  function(t)  if type(t)=='table' then  return next ,t,nil  elseif t then LibShared.softassert(false, "pairsOrNil(t) expected table or nil, got "..type(t)) end  return nonext,t,nil  end
+LibShared.ipairsOrNil = LibShared.ipairsOrNil  or  function(t)  if type(t)=='table' then  return inext,t,0   elseif t then LibShared.softassert(false, "ipairsOrNil(t) expected table or nil, got "..type(t)) end  return nonext,t,nil  end
 --]]
 
 --[[ Alternative:

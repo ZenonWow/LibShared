@@ -5,7 +5,7 @@ local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 -- Used from _G:  geterrorhandler
 -- Used from LibShared:
 -- Exported to _G:
--- Exported to LibShared:  istype,istable,isfunc,isstring,isnumber
+-- Exported to LibShared:  istype, isstring,isnumber,isbool, istable,isuserdata,istablelike, isfunc,isthread
 
 -- Upvalued Lua globals:
 local type = type

@@ -22,7 +22,6 @@ LibShared.ImportMeta = LibShared.ImportMeta or  setmetatable({}, {
 		return ImportMeta
 	end,
 	__newindex = function(ImportMeta, feature, newvalue)  G.geterrorhandler()(false, "Do not modify LibShared.ImportMeta."..G.tostring(feature))  end,
-	end,
 })
 
 

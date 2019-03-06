@@ -1,5 +1,5 @@
 local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
--- local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
+local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
 -- Used from _G:  geterrorhandler  (might be hooked/modified)
@@ -23,6 +23,17 @@ asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject): `d
 
 
 -----------------------------
+--- LibShared. errorhandler(errorMessage):  Report error. Calls _G.geterrorhandler(), without tailcall to generate readable stacktrace.
+-- Allows hooking G.geterrorhandler(): the returned errorhandler is not saved.
+-- Calls through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
+-- Avoids tailcall and returns the errorMessage like the builtin errorhandler with `or errorMessage`.
+--
+LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = G.geterrorhandler() ; return errorhandler(errorMessage) or errorMessage  end
+local errorhandler = LibShared.errorhandler
+
+
+
+-----------------------------
 --- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
 -- Check for unexpected values or anomalies without crashing. Reports anomaly, then continues your function, unlike assert().
 -- @param condition - result of a check that is expected to return a truthy value.
@@ -32,7 +43,7 @@ asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject): `d
 -- Copy-paste these 4 lines to your file to include without depending on LibShared being loaded.
 --- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
 local LibShared = G.LibShared or {}  ;  G.LibShared = LibShared
-LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or G.geterrorhandler()(message)  end
+LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or LibShared.errorhandler(message)  end
 local softassert = LibShared.softassert
 
 -- You can use the return value to make compact statements:
@@ -47,7 +58,7 @@ local softassert = LibShared.softassert
 -- @return condition, (message if condition fails)
 --
 LibShared.softassertf = LibShared.softassertf  or  function(ok, messageFormat, ...)
-	if ok then  return ok,nil  end  ;  local message = format(messageFormat, ...)  ;  G.geterrorhandler()(message)  ;  return ok,message
+	if ok then  return ok,nil  end  ;  local message = format(messageFormat, ...)  ;  LibShared.errorhandler(message)  ;  return ok,message
 end
 
 
@@ -93,7 +104,11 @@ end
 -- Stops execution if condition fails, like  assert().
 --
 LibShared.assertf = LibShared.assertf  or  function(ok, messageFormat, ...)  if not ok then  error( format(messageFormat, ...), 2 )  end  end
-LibShared.assertnf = LibShared.assertnf  or  function(ok, callDepth, messageFormat, ...)  if not ok then  error( format(messageFormat, ...), (callDepth or 0)+2 )  end  end
+LibShared.assertnf = LibShared.assertnf  or  function(callDepth, ok, messageFormat, ...)
+	callDepth = tonumber(callDepth)
+  if not ok or not callDepth then  error( format(messageFormat, ...), (callDepth or 0)+2 )  end
+end
+
 
 
 
@@ -102,15 +117,15 @@ LibShared.assertnf = LibShared.assertnf  or  function(ok, callDepth, messageForm
 -- Alternatives:
 --[[
 LibShared.softassert = LibShared.softassert or  function(ok, message)
-	-- return  ok,  ok  or  (G.geterrorhandler()(message) or message)  or  nil
-	-- if ok then  return ok,nil  else  G.geterrorhandler()(message) ; return ok,message  end
-	-- if not ok then  G.geterrorhandler()(message) ; return ok,message  else  return ok,nil  end
-	-- if not ok then  G.geterrorhandler()(message) ; return ok,message  else  return ok,nil  end
-	-- if not ok then  G.geterrorhandler()(message)  end ; return ok, ok and message or nil  end
-	-- if not ok then  G.geterrorhandler()(message)  end ; return ok  end
-	-- return ok, not ok and G.geterrorhandler()(message)  end
-	-- return ok, ( ok or G.geterrorhandler()(message) ) and nil  end
-	-- return ok, ok or G.geterrorhandler()(message)  end
+	-- return  ok,  ok  or  (LibShared.errorhandler(message) or message)  or  nil
+	-- if ok then  return ok,nil  else  LibShared.errorhandler(message) ; return ok,message  end
+	-- if not ok then  LibShared.errorhandler(message) ; return ok,message  else  return ok,nil  end
+	-- if not ok then  LibShared.errorhandler(message) ; return ok,message  else  return ok,nil  end
+	-- if not ok then  LibShared.errorhandler(message)  end ; return ok, ok and message or nil  end
+	-- if not ok then  LibShared.errorhandler(message)  end ; return ok  end
+	-- return ok, not ok and LibShared.errorhandler(message)  end
+	-- return ok, ( ok or LibShared.errorhandler(message) ) and nil  end
+	-- return ok, ok or LibShared.errorhandler(message)  end
 end
 --]]
 

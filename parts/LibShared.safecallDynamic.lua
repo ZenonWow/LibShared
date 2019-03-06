@@ -19,12 +19,8 @@ if not LibShared.safecallDynamic then
 
 	-- Upvalued Lua globals
 	local xpcall,type,select,unpack = xpcall,type,select,unpack
-
-	-- Allow hooking G.geterrorhandler(): don't cache/upvalue it or the errorhandler returned.
-	-- Call through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
-	-- Also avoid tailcall with select(1,...). A tailcall would show LibShared.errorhandler() function as "?" in stacktrace, making it harder to identify.
-	LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = G.geterrorhandler() ; return select( 1, errorhandler(errorMessage) )  end
-	local errorhandler = LibShared.errorhandler
+	-- Used from LibShared:
+	local errorhandler = G.assert(LibShared.errorhandler, 'Include "LibShared.softassert.lua" before.')
 	
 
 	function LibShared.safecallDynamic(unsafeFunc, ...)
@@ -37,12 +33,12 @@ if not LibShared.safecallDynamic then
 			return
 		end
 
-		local argsCount, xpcallClosure = select('#',...)
-		if  0 < argsCount  then
+		local argsN, xpcallClosure = select('#',...)
+		if  0 < argsN  then
 			-- Pack the parameters in a closure to pass to the actual function.
 			local args = {...}
 			-- Unpack the parameters in the closure.
-			xpcallClosure = function()  return unsafeFunc( unpack(args,1,argsCount) )  end
+			xpcallClosure = function()  return unsafeFunc( unpack(args,1,argsN) )  end
 		end
 
 		-- Do the call through the closure.
@@ -50,10 +46,6 @@ if not LibShared.safecallDynamic then
 		return xpcall(xpcallClosure or unsafeFunc, errorhandler)
 		-- return xpcall(xpcallClosure or unsafeFunc, G.geterrorhandler())
 	end
-
-
-	--- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
-	LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or G.geterrorhandler()(message)  end
 
 end -- LibShared.safecallDynamic
 
