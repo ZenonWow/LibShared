@@ -1,7 +1,7 @@
 local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
-assert(LibShared.Revisions, 'Include "LibShared.Revisions.lua" before.')
+G.assert(LibShared.Revisions, 'Include "LibShared.Revisions.lua" before.')
 
 -- GLOBALS:
 -- Used from _G:  DEVMODE, geterrorhandler
@@ -33,7 +33,7 @@ LibShared.UpgradeObject = LibShared.UpgradeObject or  function(LibShared, featur
 			-- LibShared.Override[feature] = value
 		end
 
-		rawset(LibShared.Revisions, feature, newversion)
+		LibShared.Revisions:_Upgrade(feature, value, newversion)
 		-- Note:  the order of return values is consistent with LibStub:NewLibrary()
 		-- But the opposite of LibShared:UpgradeFunction() which returns oldversion first.
 		-- It would be possible to swap these and be consistent with :UpgradeFunction() UpgradeFeature

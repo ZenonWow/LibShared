@@ -38,19 +38,3 @@ LibShared.Require = LibShared.Require  or setmetatable({ _inTable = LibShared },
 })
 
 
---[[
------------------------------
--- An explicit mode of checking if a feature is present/loaded:
--- if  LibShared.Has.<feature>  then  ..  end
--- Easier to search for. If that's of no concern, then:
--- if  LibShared.<feature>  then  ..  end
--- @return  LibShared.<feature> if present,  or nil if not loaded yet.
---
-LibShared.Has = LibShared.Has  or setmetatable({ _inTable = LibShared }, {
-	__newindex = function(Has, feature, newvalue)  G.geterrorhandler()("Do not modify LibShared.Has."..G.tostring(feature))  end,
-	-- __index    = function(Has, feature)  return  rawget(Has._inTable, feature)  end,
-	__index    = LibShared,
-})
---]]
-
-

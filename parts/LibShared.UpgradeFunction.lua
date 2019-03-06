@@ -1,7 +1,7 @@
 local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
-assert(LibShared.Revisions, 'Include "LibShared.Revisions.lua" before.')
+G.assert(LibShared.Revisions, 'Include "LibShared.Revisions.lua" before.')
 
 -- GLOBALS:
 -- Used from _G:
@@ -30,8 +30,7 @@ LibShared.UpgradeFunction = LibShared.UpgradeFunction or  function(LibShared, fe
 		local oldimpl = LibShared[feature]  --  or  true
 		if newimpl then
 			LibShared[feature] = newimpl
-			-- rawset(LibShared, feature, newimpl)
-			rawset(LibShared.Revisions, feature, newversion)
+			LibShared.Revisions:_Define(feature, newimpl, newversion)
 		end
 		return oldversion, oldimpl
 		-- Note:  LibStub:NewLibrary() and LibShared:UpgradeObject() return these in the opposite order.

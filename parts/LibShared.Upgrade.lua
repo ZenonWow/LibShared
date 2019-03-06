@@ -1,7 +1,7 @@
 local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
-assert(LibShared.initmetatable, 'Include "LibShared.initmetatable.lua" before.')
+G.assert(LibShared.initmetatable, 'Include "LibShared.initmetatable.lua" before.')
 
 -- GLOBALS:
 -- Exported to LibShared:  Upgrade
@@ -47,11 +47,11 @@ if Upgrade then
 local oldversion = LibShared.Revisions.Upgrade
 if oldversion < FEATURE_VERSION then
 	local Upgrade = LibShared.InitTable.Upgrade
-	LibShared.Revisions.Upgrade = FEATURE_VERSION
+	LibShared.Revisions:_Upgrade('Upgrade', FEATURE_VERSION)
 --
 if LibShared.Revisions.Upgrade < FEATURE_VERSION then
 	local Upgrade = LibShared.InitTable.Upgrade
-	LibShared.Revisions.Upgrade = FEATURE_VERSION
+	LibShared.Revisions:_Upgrade('Upgrade', FEATURE_VERSION)
 --
 if not LibShared.Upgrade then
 	local Upgrade = LibShared.InitTable.Upgrade
