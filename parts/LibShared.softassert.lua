@@ -6,12 +6,12 @@ local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 -- Used from LibShared:
 -- Exported to LibShared:  softassert, asserttype, assertf, softassertf
 
--- Upvalued Lua globals
+-- Upvalued Lua globals:
 local format,error,type = string.format,error,type
 
 
 --[[ Copy-paste import code:
-asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject): `dataobject` - ")
+asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject):  `dataobject` - ")
 --]]
 
 
@@ -68,7 +68,7 @@ end
 -- @param typename (string) - name of expected type.
 -- @param messagePrefix (string/nil) - optional error message prefixed to:  "<typename> expected, got <type>"
 --
--- Usage:  asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject): `dataobject` - ")
+-- Usage:  asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject):  `dataobject` - ")
 --
 LibShared.asserttype = LibShared.asserttype  or  function(value, typename, messagePrefix, callDepth)
 	if type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (callDepth or 0)+2 )  end
@@ -82,7 +82,7 @@ end
 -- @param messagePrefix (string/nil) - optional error message prefixed to:  "<typename> expected, got <type>"
 --
 LibShared.asserttypeOrNil = LibShared.asserttypeOrNil  or  function(value, typename, messagePrefix, callDepth)
-	if nil~=value and type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (callDepth or 0)+2 )  end
+	if nil~=value and type(value)~=typename then  error( (messagePrefix or "")..typename.." or nil expected, got "..type(value), (callDepth or 0)+2 )  end
 end
 
 

@@ -35,8 +35,8 @@ local ipairs,unpack,strsplit,type = ipairs,unpack,string.split,type
 -- LibShared.Require.Upgrade.Import[IMPORT_REVISION] = function(from, features, client, optional, callDepth)
 --
 LibShared.Import = LibShared.Import or  function(from, features, client, optional, callDepth)
-	LibShared.asserttype(from, 'table', "Usage: LibShared:Import(features, client): `LibShared` - ", (callDepth or 0)+1 )
-	LibShared.asserttype(features, 'string', "Usage: LibShared:Import(features, client): `features` - ", (callDepth or 0)+1 )
+	LibShared.asserttype(from, 'table', "Usage: LibShared:Import(features, client):  `LibShared` - ", (callDepth or 0)+1 )
+	LibShared.asserttype(features, 'string', "Usage: LibShared:Import(features, client):  `features` - ", (callDepth or 0)+1 )
 	local names, list, missing = { strsplit(", ", features) }, { n = 0 }, nil
 	for  i,feature  in ipairs(names) do  if feature ~= "" then
 		list.n, value = list.n + 1, from[feature]
