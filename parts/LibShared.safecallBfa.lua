@@ -21,7 +21,7 @@ local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 --
 if  not LibShared.safecall  and  G.select(4, G.GetBuildInfo()) >= 80000  then
 
-	-- Upvalued Lua globals
+	-- Upvalued Lua globals:
 	local xpcall = xpcall
 	-- Used from LibShared:
 	local errorhandler = G.assert(LibShared.errorhandler, 'Include "LibShared.softassert.lua" before.')
@@ -37,7 +37,7 @@ if  not LibShared.safecall  and  G.select(4, G.GetBuildInfo()) >= 80000  then
 			return
 		end
 
-		-- 2 pages in 1 line (3 dots).
+		-- 2 pages in 1 line (3 dots exactly).
 		return xpcall(unsafeFunc, errorhandler, ...)
 
 	end

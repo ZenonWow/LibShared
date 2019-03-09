@@ -52,8 +52,13 @@
 <!-- # Used from LibShared: -->
 <!-- <Script  file="LibShared.safecallBfa.lua" /> -->
 <!-- # Used from LibShared:  [softassert] -->
-<Script  file="LibShared.safecallDispatch.lua" />
 <Script  file="LibShared.safecallDynamic.lua" />
+<Script  file="LibShared.safecallForArgNum.lua" />
+<!-- <Script  file="LibShared.safecallForArgNum1.lua" /> -->
+<!-- <Script  file="LibShared.safecallForArgNum2.lua" /> -->
+<Script  file="LibShared.SafecallWrapperForArgNum.lua" />
+<Script  file="LibShared.SafecallWrapperDynamic.lua" />
+<Script  file="LibShared.safecallWrapped.lua" />
 
 
 <!-- # Specialized features -->
