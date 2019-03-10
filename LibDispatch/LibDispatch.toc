@@ -1,0 +1,13 @@
+## Interface: 50400
+## Title: Lib: Safecall (xpcall)
+## Author: Mongusius
+## X-Website: 
+## X-Category: Library
+## X-License: Limited BSD
+
+## LoadOnDemand: 1
+## OptionalDeps:
+
+
+all.xml
+
