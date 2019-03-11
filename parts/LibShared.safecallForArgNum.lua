@@ -29,16 +29,19 @@ if not LibShared.safecallForArgNum then
 
 	-- This is called `wrapperCreatorForArgNum` in the original. Here the wrapper step is merged with the closure creation.
 	local closureCreatorForArgNum = [===[
-		callback, ARGS = ...
-		return function()  return select( 1, callback(ARGS) )  end
+		local callback, ARGS
+		local function functionClosure()  return select( 1, callback(ARGS) )  end
+		local function closureCreator(calledFunc, ...)  callback, ARGS = calledFunc, ...  ;  return functionClosure  end
+		return closureCreator
 	]===]
 
 	function ClosureCreators:CompileCreator(argNum)
+		G.assert(0 < argNum)    -- argNum == 0 generates invalid lua:  callback,  = calledFunc, ...
 		local ARGS = {}
 		for i = 1,argNum do  ARGS[i] = "a"..i  end
 		local sourcecode = closureCreatorForArgNum:gsub("ARGS", G.table.concat(ARGS, ","))
 		local creator = G.assert( G.loadstring(sourcecode, "ClosureCreators[argNum="..argNum.."]") )
-		self[argNum] = creator
+		self[argNum] = creator()
 		return creator
 	end
 
@@ -54,11 +57,6 @@ if not LibShared.safecallForArgNum then
 			LibShared.softassert(false, "Usage: safecall(unsafeFunc):  function or callable table expected, got "..type(unsafeFunc))
 			return
 		end
-
-		-- Pass a delegating errorhandler to avoid G.geterrorhandler() function call before any error actually happens.
-		-- local errorhandler = LibShared.errorhandler    -- Upvalued above.
-		-- Or pass the registered errorhandler directly to avoid inserting an extra callstack frame.
-		-- local errorhandler = G.geterrorhandler()
 
 		local closureCreator = ClosureCreators[ select('#',...) ]
 		local closure = closureCreator(unsafeFunc, ...)

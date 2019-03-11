@@ -44,6 +44,7 @@ if LibDispatch then
 
 
 	function WrapperCreators:CompileCreator(argNum)
+		assert(0 < argNum)    -- argNum == 0 generates invalid lua:  local  = ...
 		LibShared.asserttype( argNum, 'number', "Usage: SafecallWrappers[argNum]:  `argNum` - ", 2)
 		if argNum == 0 then
 			sourcecode = wrapperCreatorForZeroArgs
