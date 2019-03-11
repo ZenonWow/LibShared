@@ -53,3 +53,22 @@ LibShared.removeFirst = LibShared.removeFirst or function(t, item)
 end
 
 
+
+-----------------------------
+--- LibShared. removeIf(array, conditionFunc):  Remove all items for which conditionFunc(item) returns trueish.
+-- @param array  a table used as an array  or nil/false is also accepted.
+-- @param conditionFunc  function that selects items to remove.
+-- @return count of items removed.
+--
+LibShared.removeIf = LibShared.removeIf or function(t, conditionFunc)
+	if not t then  return 0  end
+	local count = 0
+	for idx = #t,1,-1 do  if conditionFunc(t[i]) then
+		-- Iterating from end to start to move less items. This way idx need not be adjusted.
+		remove(t, idx)
+		count = count + 1
+	end end -- for if
+	return count
+end
+
+
