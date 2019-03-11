@@ -34,17 +34,40 @@ local errorhandler = LibShared.errorhandler
 
 
 -----------------------------
---- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
+--- LibShared. softerror(errorMessage, stackDepth):  Report error, with the line causing it, `stackDepth` levels higher up in the callstack.
+-- @param  stackDepth  -1 smaller than the 2nd parameter to error(). 0 == where softerror() is called.
+-- Calls _G.geterrorhandler(), without tailcall to generate readable stacktrace.
+-- Allows hooking G.geterrorhandler(): the returned errorhandler is not saved.
+-- Calls through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
+-- Avoids tailcall and returns the errorMessage like the builtin errorhandler with `or errorMessage`.
+--
+LibShared.softerror = LibShared.softerror or  function(errorMessage, stackDepth)
+  local errorhandler, stackLine = G.geterrorhandler(), G.debugstack( (stackDepth or 0)+2, 1, 0 )
+	errorMessage = (stackLine and stackLine:match("^.-:.-: ") or "") .. errorMessage
+	return errorhandler(errorMessage) or errorMessage
+end
+local softerror = LibShared.softerror
+
+
+
+-----------------------------
+--- LibShared. softassert(condition, message):  Report error, then continue execution, *unlike* assert().
 -- Check for unexpected values or anomalies without crashing. Reports anomaly, then continues your function, unlike assert().
 -- @param condition - result of a check that is expected to return a truthy value.
 -- @param message - error message passed to  errorhandler()  if condition fails.
 -- @return condition  [, garbage] (condition or message returned by builtin errorhandler _ERRORMESSAGE, or nothing returned by BugGrabber's errorhandler )
 --
 -- Copy-paste these 4 lines to your file to include without depending on LibShared being loaded.
---- LibShared. softassert(condition, message):  Report error, then continue execution, _unlike_ assert().
+--- LibShared. softassert(condition, message):  Report error, then continue execution, *unlike* assert().
 local LibShared = G.LibShared or {}  ;  G.LibShared = LibShared
-LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or LibShared.errorhandler(message)  end
+LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or LibShared.softerror(message, 1)  end
+-- LibShared.softassert = LibShared.softassert  or  function(ok, message, stackDepth)  return ok, ok or LibShared.softerror(message, (stackDepth or 0)+1)  end
 local softassert = LibShared.softassert
+
+--[[ Simpler versions to include in your file:  use the 2nd if you import errorhandler() too. Makes more readable stacktrace.
+LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
+LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or LibShared.errorhandler(message)  end
+--]]
 
 -- You can use the return value to make compact statements:
 --  local name = softassert(namestorage[dataobj], "Missing name of dataobj.") or "?"
@@ -52,13 +75,13 @@ local softassert = LibShared.softassert
 
 
 -----------------------------
---- LibShared. softassertf( condition, messageFormat, formatParameter...):  Report error, then continue execution, _unlike_ assert(). Formatted error message.
+--- LibShared. softassertf( condition, messageFormat, formatParameter...):  Report error, then continue execution, *unlike* assert(). Formatted error message.
 -- @param condition - result of a check that is expected to return a truthy value.
 -- @param messageFormat - error message passed to  string.format(), then  errorhandler()  if condition fails.
 -- @return condition, (message if condition fails)
 --
 LibShared.softassertf = LibShared.softassertf  or  function(ok, messageFormat, ...)
-	if ok then  return ok,nil  end  ;  local message = format(messageFormat, ...)  ;  LibShared.errorhandler(message)  ;  return ok,message
+	if ok then  return ok,nil  end  ;  local message = format(messageFormat, ...)  ;  LibShared.softerror(message)  ;  return ok,message
 end
 
 
