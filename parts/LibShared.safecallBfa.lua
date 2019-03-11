@@ -31,15 +31,10 @@ if  not LibShared.safecall  and  G.select(4, G.GetBuildInfo()) >= 80000  then
 		-- we check to see if the unsafeFunc passed is actually a function here and don't error when it isn't
 		-- this safecall is used for optional functions like OnInitialize OnEnable etc. When they are not
 		-- present execution should continue without hinderance
-		if  not unsafeFunc  then  return  end
-		if  type(unsafeFunc)~='function'  then
-			LibShared.softassert(false, "Usage: safecall(unsafeFunc):  function expected, got "..type(unsafeFunc))
-			return
+		if unsafeFunc then
+			-- 2 pages in 1 line (3 dots exactly).
+			return xpcall(unsafeFunc, errorhandler, ...)
 		end
-
-		-- 2 pages in 1 line (3 dots exactly).
-		return xpcall(unsafeFunc, errorhandler, ...)
-
 	end
 
 	-- No need to load these anymore. Mark them as loaded.
