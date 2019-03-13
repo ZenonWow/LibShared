@@ -40,23 +40,22 @@ if not LibShared.safecallDynamic then
 			functionClosure = unsafeFunc
 		elseif  1 == argNum  then
 			local arg1 = ...
-			functionClosure = function()  unsafeFunc(arg1)  end
+			functionClosure = function()  return select( 1, unsafeFunc(arg1) )  end
 		else
 			-- Pack the parameters in a closure to pass to the actual function.
 			local args = {...}
 			-- Unpack the parameters in the closure.
-			functionClosure = function()  return unsafeFunc( unpack(args,1,argNum) )  end
+			functionClosure = function()  return select( 1, unsafeFunc(unpack(args,1,argNum)) )  end
 		end
 
 		-- Do the call through the closure.
-		return xpcall(functionClosure, errorhandler)
+		return select( 1, xpcall(functionClosure, errorhandler) )
 		-- return xpcall(functionClosure, G.geterrorhandler())
 	end
 
+
+	LibShared.safecall = LibShared.safecall or LibShared.safecallDynamic
+
 end -- LibShared.safecallDynamic
-
-
-
-LibShared.safecall = LibShared.safecall or LibShared.safecallDynamic
 
 
