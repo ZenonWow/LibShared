@@ -37,6 +37,8 @@ if  not LibShared.safecall  and  G.select(4, G.GetBuildInfo()) >= 80000  then
 		end
 	end
 
+	LibShared.xpcallBfa = xpcall
+
 	-- No need to load these anymore. Mark them as loaded.
 	LibShared.safecallDynamic = LibShared.safecall
 	LibShared.safecallDispatch = LibShared.safecall

@@ -65,10 +65,9 @@ if not LibShared.safecallForArgNum2 then
 		return select( 1, xpcallForArgNum(unsafeFunc, errorhandler, ...) )
 	end
 
+
+	LibShared.safecall = LibShared.safecall or LibShared.safecallForArgNum2
+
 end -- LibShared.safecallForArgNum2
-
-
-
-LibShared.safecall = LibShared.safecall or LibShared.safecallForArgNum2
 
 

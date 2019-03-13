@@ -70,10 +70,9 @@ if not LibShared.safecallForArgNum1 then
 		return select( 1, safecallForArgNum1(unsafeFunc, ...) )
 	end
 
+
+	LibShared.safecall = LibShared.safecall or LibShared.safecallForArgNum1
+
 end -- LibShared.safecallForArgNum1
-
-
-
-LibShared.safecall = LibShared.safecall or LibShared.safecallForArgNum1
 
 

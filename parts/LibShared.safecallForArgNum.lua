@@ -50,6 +50,23 @@ if not LibShared.safecallForArgNum then
 	setmetatable(ClosureCreators, { __index = ClosureCreators.CompileCreator })
 
 
+	--[[
+	function LibShared.xpcallForArgNum(unsafeFunc, errorhandler, ...)
+		-- unsafeFunc is optional. If provided, it must be a function or a callable table.
+		if not unsafeFunc then  return  end
+
+		local closureCreator = ClosureCreators[ select('#',...) ]
+		local closure = closureCreator(unsafeFunc, ...)
+		-- Avoid tailcall with select(1,...).
+		return select( 1, xpcall(closure, errorhandler) )
+	end
+
+
+	function LibShared.safecallForArgNum(unsafeFunc, ...)  return select( 1, LibShared.xpcallForArgNum(unsafeFunc, errorhandler, ...) )  end
+	LibShared.xpcallBfa = LibShared.xpcallBfa or LibShared.xpcallForArgNum
+	--]]
+
+
 	function LibShared.safecallForArgNum(unsafeFunc, ...)
 		-- unsafeFunc is optional. If provided, it must be a function or a callable table.
 		if not unsafeFunc then  return  end
@@ -64,10 +81,9 @@ if not LibShared.safecallForArgNum then
 		return select( 1, xpcall(closure, errorhandler) )
 	end
 
+
+	LibShared.safecall = LibShared.safecall or LibShared.safecallForArgNum
+
 end -- LibShared.safecallForArgNum
-
-
-
-LibShared.safecall = LibShared.safecall or LibShared.safecallForArgNum
 
 
