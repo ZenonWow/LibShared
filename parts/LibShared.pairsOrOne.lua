@@ -4,8 +4,8 @@ local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 -- GLOBALS:
 -- Used from _G:  ipairs, table, geterrorhandler
 -- Used from LibShared:
--- Exported to _G:  inext
--- Exported to LibShared:  inext, tkeys, tvalues,  pairsOrOne, ipairsOrOne,  packOrOne
+-- Exported to _G:  inext, keys, values, table.keys, table.values
+-- Exported to LibShared:  inext, keys, values,  pairsOrOne, ipairsOrOne,  packOrOne
 
 -- Upvalued Lua globals:
 local type,select,next = type,select,next
@@ -25,15 +25,17 @@ local inext = LibShared.Require.inext
 -----------------------------
 -- LibShared. inext() is the pair of next() that goes with ipairs()
 LibShared.inext = LibShared.inext  or  G.ipairs({})
-G.inext        = G.inext  or LibShared.inext
+G.inext         = G.inext  or  LibShared.inext
 local inext = LibShared.inext
 
 
 -----------------------------
-LibShared.tkeys   = LibShared.tkeys   or  function(t)	 local ks={} ; for k,_ in next,t,nil do  ks[#ks+1] = k  end ; return ks  end
-LibShared.tvalues = LibShared.tvalues or  function(t)  local vs={} ; for _,v in next,t,nil do  vs[#vs+1] = v  end ; return vs  end
-G.table.keys = tkeys
-G.table.values  = tvalues
+LibShared.keys   = LibShared.keys   or  function(t)	 local ks={} ; for k,_ in next,t,nil do  ks[#ks+1] = k  end ; return ks  end
+LibShared.values = LibShared.values or  function(t)  local vs={} ; for _,v in next,t,nil do  vs[#vs+1] = v  end ; return vs  end
+G.table.keys   = G.table.keys   or LibShared.keys
+G.table.values = G.table.values or LibShared.values
+G.keys   = G.keys   or LibShared.keys
+G.values = G.values or LibShared.values
 
 
 -----------------------------
