@@ -2,8 +2,8 @@ local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
--- Used from global in code snippet:  select, xpcall
--- Used from _G:  [geterrorhandler], table.concat, tostring, assert, loadstring  (ca. 5 times)
+-- Used from global in code snippet:  select
+-- Used from _G:  [geterrorhandler], xpcall, table.concat, tostring, assert, loadstring  (ca. 5 times)
 -- Used from LibShared:  errorhandler, softassert
 -- Exported to LibShared:  safecall, safecallForArgNum
 
@@ -20,9 +20,10 @@ local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 if not LibShared.safecallForArgNum then
 
 	-- Upvalued Lua globals:
-	local xpcall,type,select = xpcall,type,select
+	local type,select = type,select
 	-- Used from LibShared:
-	local errorhandler = G.assert(LibShared.errorhandler, 'Include "LibShared.softassert.lua" before.')
+	G.assert(LibShared.errorhandler, 'Include "LibShared.errorhandler.lua" before.')
+	G.assert(LibShared.softerror, 'Include "LibShared.softassert.lua" before.')
 
 
 	local ClosureCreators = {}
@@ -57,13 +58,12 @@ if not LibShared.safecallForArgNum then
 
 		local closureCreator = ClosureCreators[ select('#',...) ]
 		local closure = closureCreator(unsafeFunc, ...)
-		-- Avoid tailcall with select(1,...).
-		return select( 1, xpcall(closure, errorhandler) )
+		-- Do the call through xpcall and the closure. Avoid tailcall with select(1,...). Call G.xpcall() instead of xpcall(), so it shows its name in the callstack.
+		return select( 1, G.xpcall(closure, errorhandler) )
 	end
 
 
 	function LibShared.safecallForArgNum(unsafeFunc, ...)  return select( 1, LibShared.xpcallForArgNum(unsafeFunc, errorhandler, ...) )  end
-	LibShared.xpcallBfa = LibShared.xpcallBfa or LibShared.xpcallForArgNum
 	--]]
 
 
@@ -77,12 +77,9 @@ if not LibShared.safecallForArgNum then
 
 		local closureCreator = ClosureCreators[ select('#',...) ]
 		local closure = closureCreator(unsafeFunc, ...)
-		-- Avoid tailcall with select(1,...).
-		return select( 1, xpcall(closure, errorhandler) )
+		-- Do the call through xpcall and the closure. Avoid tailcall with select(1,...). Call G.xpcall() instead of xpcall(), so it shows its name in the callstack.
+		return select( 1, G.xpcall(closure, LibShared.errorhandler) )
 	end
-
-
-	LibShared.safecall = LibShared.safecall or LibShared.safecallForArgNum
 
 end -- LibShared.safecallForArgNum
 

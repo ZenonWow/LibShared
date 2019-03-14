@@ -23,38 +23,35 @@ if not LibShared.safecallDynamic then
 	-- Upvalued Lua globals
 	local type,select,unpack = type,select,unpack
 	-- Used from LibShared:
-	local errorhandler = G.assert(LibShared.errorhandler, 'Include "LibShared.softassert.lua" before.')
+	G.assert(LibShared.errorhandler, 'Include "LibShared.errorhandler.lua" before.')
+	G.assert(LibShared.softerror, 'Include "LibShared.softassert.lua" before.')
 	
 
 	function LibShared.safecallDynamic(unsafeFunc, ...)
 		-- unsafeFunc is optional. If provided, it must be a function or a callable table.
 		if not unsafeFunc then  return  end
 		if type(unsafeFunc)~='function' and type(unsafeFunc)~='table' then
-			LibShared.softassert(false, "Usage: safecall(unsafeFunc):  function or callable table expected, got "..type(unsafeFunc))
+			LibShared.softerror("Usage: safecall(unsafeFunc):  function or callable table expected, got "..type(unsafeFunc))
 			return
 		end
 
-		local argNum, functionClosure = select('#',...)
+		local argNum, closure = select('#',...)
 		if  0 == argNum  then
 		-- Without parameters call the function directly.
-			functionClosure = unsafeFunc
+			closure = unsafeFunc
 		elseif  1 == argNum  then
 			local arg1 = ...
-			functionClosure = function()  return select( 1, unsafeFunc(arg1) )  end
+			closure = function()  return select( 1, unsafeFunc(arg1) )  end
 		else
 			-- Pack the parameters in a closure to pass to the actual function.
 			local args = {...}
 			-- Unpack the parameters in the closure.
-			functionClosure = function()  return select( 1, unsafeFunc(unpack(args,1,argNum)) )  end
+			closure = function()  return select( 1, unsafeFunc(unpack(args,1,argNum)) )  end
 		end
 
-		-- Do the call through xpcall and the closure. Call G.xpcall() instead of xpcall(), so it shows its name in the callstack.
-		return select( 1, G.xpcall(functionClosure, errorhandler) )
-		-- return G.xpcall(functionClosure, G.geterrorhandler())
+		-- Do the call through xpcall and the closure. Avoid tailcall with select(1,...). Call G.xpcall() instead of xpcall(), so it shows its name in the callstack.
+		return select( 1, G.xpcall(closure, LibShared.errorhandler) )
 	end
-
-
-	LibShared.safecall = LibShared.safecall or LibShared.safecallDynamic
 
 end -- LibShared.safecallDynamic
 

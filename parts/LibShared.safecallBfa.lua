@@ -8,7 +8,7 @@ local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 
 
 -------------------------------------------
---- LibShared.  safecall(unsafeFunc, arg1, arg2, ...)
+--- LibShared. safecall(unsafeFunc, arg1, arg2, ...)
 --
 -- Similar to pcall(unsafeFunc, arg1, arg2, ...)
 -- with proper errorhandler while executing unsafeFunc.
@@ -19,29 +19,30 @@ local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 --
 -- Lua 5.2 was released on 16 Dec 2011, Bfa on 14 Aug 2018. After 7 years:  2 pages in 1 line.
 --
-if  not LibShared.safecall  and  G.select(4, G.GetBuildInfo()) >= 80000  then
+if  not LibShared.safecallBfa  and  G.select(4, G.GetBuildInfo()) >= 80000  then
 
 	-- Upvalued Lua globals:
 	local xpcall = xpcall
 	-- Used from LibShared:
-	local errorhandler = G.assert(LibShared.errorhandler, 'Include "LibShared.softassert.lua" before.')
+	G.assert(LibShared.errorhandler, 'Include "LibShared.errorhandler.lua" before.')
 
 
-	LibShared.safecall = function(unsafeFunc, ...)
+	LibShared.safecallBfa = function(unsafeFunc, ...)
 		-- we check to see if the unsafeFunc passed is actually a function here and don't error when it isn't
 		-- this safecall is used for optional functions like OnInitialize OnEnable etc. When they are not
 		-- present execution should continue without hinderance
 		if unsafeFunc then
 			-- 2 pages in 1 line (3 dots exactly).
-			return xpcall(unsafeFunc, errorhandler, ...)
+			return xpcall(unsafeFunc, LibShared.errorhandler, ...)
 		end
 	end
 
-	LibShared.xpcallBfa = xpcall
+	LibShared.safecall = safecallBfa
+	LibShared.xpcallArgs = xpcall
 
 	-- No need to load these anymore. Mark them as loaded.
-	LibShared.safecallDynamic = LibShared.safecall
-	LibShared.safecallDispatch = LibShared.safecall
+	LibShared.safecallDynamic = LibShared.safecallBfa
+	LibShared.safecallForArgNum = LibShared.safecallBfa
 
 end
 

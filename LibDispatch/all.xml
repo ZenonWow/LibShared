@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
 
-<!-- # Used from LibShared:  errorhandler, softassert -->
-<Script  file="LibShared.softassert.lua" />
+<!-- # Used from LibShared:  softerror -->
+<!-- <Script  file="LibShared.softassert.lua" /> -->
 <!-- <Script  file="..\LibShared\parts\LibShared.softassert.lua" /> -->
 
 <Script  file="CallWrapperDynamic.lua" />

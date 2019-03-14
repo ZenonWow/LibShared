@@ -1,8 +1,7 @@
 local G, LIB_NAME, LIB_REVISION  =  _G, 'LibDispatch', 1
--- assert(LibStub and LibStub.NewLibraryPart, 'Include "LibStub.NewLibraryPart.lua" before LibDispatch.')
--- local LibDispatch = LibStub:NewLibraryPart(LIB_NAME, LIB_REVISION, 'CallWrapper')
-assert(LibStub, 'Include "LibStub.lua" before LibDispatch.')
-local LibDispatch = LibStub:NewLibrary(LIB_NAME, LIB_REVISION)
+assert(LibStub and LibStub.NewLibraryPart, 'Include "LibStub.NewLibraryPart.lua" before LibDispatch.')
+local LibDispatch = LibStub:NewLibraryPart(LIB_NAME, LIB_REVISION, 'CallWrapper')
+if not LibDispatch then  return  end
 
 -- GLOBALS:
 -- Used from LibDispatch:  CallWrapperForArgNum / CallWrapperDynamic
@@ -35,10 +34,8 @@ local LibDispatch = LibStub:NewLibrary(LIB_NAME, LIB_REVISION)
 -- -- Avoid tailcall with select(1,...).
 -- return select( 1, xpcall(closure, errorhandler) )
 --
-if LibDispatch then
-	LibDispatch.CallWrapper = nil
-		or LibDispatch.CallWrapperForArgNum
-		or LibDispatch.CallWrapperDynamic
-end
+LibDispatch.CallWrapper = nil
+	or LibDispatch.CallWrapperDynamic
+	or LibDispatch.CallWrapperForArgNum
 
 

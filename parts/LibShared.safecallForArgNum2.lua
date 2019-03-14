@@ -19,35 +19,32 @@ if not LibShared.safecallForArgNum2 then
 	-- Upvalued Lua globals:
 	local xpcall,type,select = xpcall,type,select
 	-- Used from LibShared:
-	local errorhandler = G.assert(LibShared.errorhandler, 'Include "LibShared.softassert.lua" before.')
+	G.assert(LibShared.errorhandler, 'Include "LibShared.errorhandler.lua" before.')
+	G.assert(LibShared.softerror, 'Include "LibShared.softassert.lua" before.')
 
 
-	local SafecallForArgNum = {}
+	local XPcallForArgNum = {}
 
-	local createSafecallForArgNum = [===[
+	local createXPcallForArgNum = [===[
 		callback, errorhandler, ARGS = ...
 		local function functionClosure()  return select( 1, callback(ARGS) )  end
 		return xpcall(functionClosure, errorhandler)
-		-- return xpcall(functionClosure, geterrorhandler())
 	]===]
 
-	function SafecallForArgNum:CreateForArgNum2(argNum)
+	function XPcallForArgNum:CreateForArgNum2(argNum)
 		local ARGS = {}
 		for i = 1,argNum do  ARGS[i] = "a"..i  end
-		local sourcecode = createSafecallForArgNum:gsub("ARGS", G.table.concat(ARGS, ","))
-		local xpcallForArgNum = G.assert( G.loadstring(sourcecode, "SafecallForArgNum[argNum="..argNum.."]") )
+		local sourcecode = createXPcallForArgNum:gsub("ARGS", G.table.concat(ARGS, ","))
+		local xpcallForArgNum = G.assert( G.loadstring(sourcecode, "XPcallForArgNum[argNum="..argNum.."]") )
 		self[argNum] = xpcallForArgNum
 		return xpcallForArgNum
 	end
 
 
-	setmetatable(SafecallForArgNum, { __index = SafecallForArgNum.CreateForArgNum })
+	setmetatable(XPcallForArgNum, { __index = XPcallForArgNum.CreateForArgNum })
 
-	SafecallForArgNum[0] = function(unsafeFunc)
-		-- Pass a delegating errorhandler to avoid G.geterrorhandler() function call before any error actually happens.
+	XPcallForArgNum[0] = function(unsafeFunc, errorhandler)
 		return xpcall(unsafeFunc, errorhandler)
-		-- Or pass the registered errorhandler directly to avoid inserting an extra callstack frame.
-		-- return xpcall(unsafeFunc, G.geterrorhandler())
 	end
 
 
@@ -55,18 +52,15 @@ if not LibShared.safecallForArgNum2 then
 		-- unsafeFunc is optional. If provided, it must be a function or a callable table.
 		if not unsafeFunc then  return  end
 		if type(unsafeFunc)~='function' and type(unsafeFunc)~='table' then
-			LibShared.softassert(false, "Usage: safecall(unsafeFunc):  function or callable table expected, got "..type(unsafeFunc))
+			LibShared.softerror("Usage: safecall(unsafeFunc):  function or callable table expected, got "..type(unsafeFunc))
 			return
 		end
 
-		-- Called xpcall.. cause the 2nd parameter is the errorhandler, as in xpcall(), but _not_ in safecall().
-		local xpcallForArgNum = SafecallForArgNum[ select('#',...) ]
-		-- Avoid tailcall with select(1,...).
-		return select( 1, xpcallForArgNum(unsafeFunc, errorhandler, ...) )
+		-- Called xpcall.. cause the 2nd parameter is the errorhandler, as in xpcall(), but *not* in safecall().
+		local xpcallForArgNum = XPcallForArgNum[ select('#',...) ]
+		-- Do the call through xpcallForArgNum. Avoid tailcall with select(1,...).
+		return select( 1, xpcallForArgNum(unsafeFunc, LibShared.errorhandler, ...) )
 	end
-
-
-	LibShared.safecall = LibShared.safecall or LibShared.safecallForArgNum2
 
 end -- LibShared.safecallForArgNum2
 
