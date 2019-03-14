@@ -24,15 +24,3 @@ local LibShared = LibShared
 
 
 
-
-
-Convert LibShared.Define to plain Lua with regular expression search-and-replace:
---
-Find what:
-LibShared.Define.([^=\n]+) = 
-Replace with:
-LibShared.\1 = LibShared.\1 or 
-
-
-
-
