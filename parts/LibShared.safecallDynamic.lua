@@ -2,7 +2,7 @@ local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
--- Used from _G:  geterrorhandler
+-- Used from _G:  geterrorhandler, xpcall
 -- Used from LibShared:  errorhandler, softassert
 -- Exported to LibShared:  safecall, safecallDynamic
 
@@ -21,7 +21,7 @@ local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 if not LibShared.safecallDynamic then
 
 	-- Upvalued Lua globals
-	local xpcall,type,select,unpack = xpcall,type,select,unpack
+	local type,select,unpack = type,select,unpack
 	-- Used from LibShared:
 	local errorhandler = G.assert(LibShared.errorhandler, 'Include "LibShared.softassert.lua" before.')
 	
@@ -48,9 +48,9 @@ if not LibShared.safecallDynamic then
 			functionClosure = function()  return select( 1, unsafeFunc(unpack(args,1,argNum)) )  end
 		end
 
-		-- Do the call through the closure.
-		return select( 1, xpcall(functionClosure, errorhandler) )
-		-- return xpcall(functionClosure, G.geterrorhandler())
+		-- Do the call through xpcall and the closure. Call G.xpcall() instead of xpcall(), so it shows its name in the callstack.
+		return select( 1, G.xpcall(functionClosure, errorhandler) )
+		-- return G.xpcall(functionClosure, G.geterrorhandler())
 	end
 
 
