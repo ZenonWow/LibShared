@@ -2,69 +2,69 @@ local G, LIBSHARED_NAME  =  _G, LIBSHARED_NAME or 'LibShared'
 local LibShared = G[LIBSHARED_NAME] or {}  ;  G[LIBSHARED_NAME] = LibShared
 
 -- GLOBALS:
--- Used from _G:  geterrorhandler  (might be hooked/modified)
+-- Used from _G:  geterrorhandler (might be hooked/modified), debugstack, string.match
 -- Used from LibShared:
--- Exported to LibShared:  softassert, asserttype, assertf, softassertf
+-- Exported to LibShared:  softerror, softassert, softassertf
+-- Updates in LibShared:  errorhandler
 
 -- Upvalued Lua globals:
-local format,error,type = string.format,error,type
+local format = G.string.format
 
 
---[[ Copy-paste import code:
-asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject):  `dataobject` - ")
+--[[ Copy-paste samples:
+softassert(LibStub('AceEvent-3.0'), 'Include "AceEvent-3.0.lua" before.')
+softerror( not LibStub('AceEvent-3.0')  and  'Include "AceEvent-3.0.lua" before.' )
+local lib = "AceEvent-3.0" ; softassertf(LibStub(lib), 'Include "%s" before.', lib)
+local lib = "AceEvent-3.0" ; softassertf(LibStub(lib), 'Include %q before.', lib)
 --]]
 
 
 -----------------------------
---- errorf(...)     = assertf(false, ...)
---- softerror(...)  = softassert(false, ...)
---- softerrorf(...) = softassertf(false, ...)
-
-
-
------------------------------
---- LibShared. errorhandler(errorMessage):  Report error. Calls _G.geterrorhandler(), without tailcall to generate readable stacktrace.
--- Allows hooking G.geterrorhandler(): the returned errorhandler is not saved.
--- Calls through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
+--- LibShared.softerror(errorMessage, stackDepth):  Report error, with the line causing it, then continue execution, *unlike* error().
+-- @param  errorMessage  nil/false  if there is no error, and softerror() should return without doing anything.
+-- Use it when `errorMessage` is a calculated string that you don't want to create every time, only if the error condition is true, like so:
+--  LibShared.softerror( somethingwrong and "Error:  "..tostring(somethingwrong).."  happened at "..date("%H:%M:%S") )
+--  -- tostring() and date() will be executed only if `somethingwrong` evaluates to trueish.
+-- @param `stackDepth` (number)  how many calls higher up in the callstack is the causing line.
+--   -1 smaller than the 2nd parameter to error(). 0 == where softerror() is called.
+--
+-- Calls the registered errorhandler without tailcall to generate readable stacktrace.
+-- Allows hooking G.geterrorhandler().
+-- Calls through LibShared.errorhandler(), thus the errorhandler() function name is printed in stacktrace, not just a line number.
 -- Avoids tailcall and returns the errorMessage like the builtin errorhandler with `or errorMessage`.
 --
-LibShared.errorhandler = LibShared.errorhandler or  function(errorMessage)  local errorhandler = G.geterrorhandler() ; return errorhandler(errorMessage) or errorMessage  end
-local errorhandler = LibShared.errorhandler
-
-
-
------------------------------
---- LibShared. softerror(errorMessage, stackDepth):  Report error, with the line causing it, `stackDepth` levels higher up in the callstack.
--- @param  stackDepth  -1 smaller than the 2nd parameter to error(). 0 == where softerror() is called.
--- Calls _G.geterrorhandler(), without tailcall to generate readable stacktrace.
--- Allows hooking G.geterrorhandler(): the returned errorhandler is not saved.
--- Calls through errorhandler() local, thus the errorhandler() function name is printed in stacktrace, not just a line number.
--- Avoids tailcall and returns the errorMessage like the builtin errorhandler with `or errorMessage`.
---
-LibShared.softerror = LibShared.softerror or  function(errorMessage, stackDepth)
-  local errorhandler, stackLine = G.geterrorhandler(), G.debugstack( (stackDepth or 0)+2, 1, 0 )
+function LibShared.softerror(errorMessage, stackDepth)
+	if not errorMessage then  return errorMessage  end
+  local stackLine = G.debugstack( (stackDepth or 0)+2, 1, 0 )
 	errorMessage = (stackLine and stackLine:match("^.-:.-: ") or "") .. errorMessage
-	return errorhandler(errorMessage) or errorMessage
+	LibShared.errorhandler = G.geterrorhandler()
+	return LibShared.errorhandler(errorMessage) or errorMessage
 end
-local softerror = LibShared.softerror
 
+--[[ Simpler versions to include in your file:  will be overwritten with the advanced version if LibShared is loaded.
+--- LibShared.softerror(message):  Report error, then continue execution, *unlike* error().
+LibShared.softerror = LibShared.softerror or _G.geterrorhandler()
+LibShared.softerror = LibShared.softerror or LibShared.errorhandler
+--]]
 
 
 -----------------------------
---- LibShared. softassert(condition, message):  Report error, then continue execution, *unlike* assert().
+--- LibShared.softassert(condition, message):  Report error, then continue execution, *unlike* assert().
 -- Check for unexpected values or anomalies without crashing. Reports anomaly, then continues your function, unlike assert().
--- @param condition - result of a check that is expected to return a truthy value.
+-- @param condition - result of a check that is expected to return a trueish value.
 -- @param message - error message passed to  errorhandler()  if condition fails.
 -- @return condition  [, garbage] (condition or message returned by builtin errorhandler _ERRORMESSAGE, or nothing returned by BugGrabber's errorhandler )
 --
 -- Copy-paste these 4 lines to your file to include without depending on LibShared being loaded.
 --- LibShared. softassert(condition, message):  Report error, then continue execution, *unlike* assert().
 local LibShared = G.LibShared or {}  ;  G.LibShared = LibShared
-LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or LibShared.softerror(message, 1)  end
--- LibShared.softassert = LibShared.softassert  or  function(ok, message, stackDepth)  return ok, ok or LibShared.softerror(message, (stackDepth or 0)+1)  end
-local softassert = LibShared.softassert
+function LibShared.softassert(ok, message)
+	return ok, ok or LibShared.softerror(message or "", 1)
+end
+-- function LibShared.softassert(ok, message, stackDepth)  return ok, ok or LibShared.softerror(message, (stackDepth or 0)+1)  end
 
---[[ Simpler versions to include in your file:  use the 2nd if you import errorhandler() too. Makes more readable stacktrace.
+
+--[[ Simpler versions to include in your file as a fallback:  use the 2nd if you include LibShared.errorhandler.lua too. Makes more readable stacktrace.
 LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or _G.geterrorhandler()(message)  end
 LibShared.softassert = LibShared.softassert  or  function(ok, message)  return ok, ok or LibShared.errorhandler(message)  end
 --]]
@@ -75,64 +75,18 @@ LibShared.softassert = LibShared.softassert  or  function(ok, message)  return o
 
 
 -----------------------------
---- LibShared. softassertf( condition, messageFormat, formatParameter...):  Report error, then continue execution, *unlike* assert(). Formatted error message.
+--- LibShared.softassertf( condition, messageFormat, formatParameter...):  Report error, then continue execution, *unlike* assert(). Formatted error message.
 -- @param condition - result of a check that is expected to return a truthy value.
 -- @param messageFormat - error message passed to  string.format(), then  errorhandler()  if condition fails.
 -- @return condition, (message if condition fails)
 --
-LibShared.softassertf = LibShared.softassertf  or  function(ok, messageFormat, ...)
-	if ok then  return ok,nil  end  ;  local message = format(messageFormat, ...)  ;  LibShared.softerror(message)  ;  return ok,message
+function LibShared.softassertf(ok, messageFormat, ...)
+	if ok then  return ok,nil  end  ;  local message = format(messageFormat, ...)  ;  LibShared.softerror(message, 1)  ;  return ok,message
 end
 
 
 -----------------------------
---- LibShared. asserttype(value, typename, [messagePrefix]):  Raises error (stops execution) if value's type is not the expected `typename`.
--- @param value - to check for type.
--- @param typename (string) - name of expected type.
--- @param messagePrefix (string/nil) - optional error message prefixed to:  "<typename> expected, got <type>"
---
--- Usage:  asserttype(inputFields, 'table', "Usage: LDB:NewDataObject(name, dataobject):  `dataobject` - ")
---
-LibShared.asserttype = LibShared.asserttype  or  function(value, typename, messagePrefix, callDepth)
-	if type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (callDepth or 0)+2 )  end
-end
-
-
------------------------------
---- LibShared. asserttypeOrNil(value, typename, [messagePrefix]):  Raises error (stops execution) if value's type is not the expected `typename` and value is not nil.
--- @param value - to check for type.
--- @param typename (string) - name of expected type.
--- @param messagePrefix (string/nil) - optional error message prefixed to:  "<typename> expected, got <type>"
---
-LibShared.asserttypeOrNil = LibShared.asserttypeOrNil  or  function(value, typename, messagePrefix, callDepth)
-	if nil~=value and type(value)~=typename then  error( (messagePrefix or "")..typename.." or nil expected, got "..type(value), (callDepth or 0)+2 )  end
-end
-
-
------------------------------
---- LibShared. asserttypeOrFalse(value, typename, [messagePrefix]):  Raises error (stops execution) if value's type is not the expected `typename` and value is not nil or false.
--- @param value - to check for type.
--- @param typename (string) - name of expected type.
--- @param messagePrefix (string/nil) - optional error message prefixed to:  "<typename> expected, got <type>"
---
-LibShared.asserttypeOrFalse = LibShared.asserttypeOrFalse  or  function(value, typename, messagePrefix, callDepth)
-	if value and type(value)~=typename then  error( (messagePrefix or "")..typename.." expected, got "..type(value), (callDepth or 0)+2 )  end
-end
-
-
------------------------------
---- LibShared. assertf(condition, messageFormat, formatParameter...):  Raises error (stops execution) if condition fails. Formatted error message.
--- @param condition - result of a check that is expected to return a truthy value.
--- @param messageFormat - error message passed to  string.format(), then  error()  if condition fails.
--- Stops execution if condition fails, like  assert().
---
-LibShared.assertf = LibShared.assertf  or  function(ok, messageFormat, ...)  if not ok then  error( format(messageFormat, ...), 2 )  end  end
-LibShared.assertnf = LibShared.assertnf  or  function(callDepth, ok, messageFormat, ...)
-	callDepth = tonumber(callDepth)
-  if not ok or not callDepth then  error( format(messageFormat, ...), (callDepth or 0)+2 )  end
-end
-
-
+--- softerrorf(...) = softassertf(false, ...)
 
 
 
@@ -151,19 +105,5 @@ LibShared.softassert = LibShared.softassert or  function(ok, message)
 	-- return ok, ok or LibShared.errorhandler(message)  end
 end
 --]]
-
-
-
-
------------------------------
--- Note about  errorhandler(message):
--- The builtin version called _ERRORMESSAGE() returns `message` (@see FrameXML/BasicControls.xml#_ERRORMESSAGE() ).
--- The following addon overrides do not follow this protocol and return nothing:
--- BugGrabber.lua#grabError()
--- Swatter.lua#OnErrorHandler
--- tekErr.lua
--- TradeSkillMaster/Core/ErrorHandler.lua#TSMErrorHandler()
--- Auctionator/AtrErrorInspector.lua#Atr_Error_Handler()
--- LUI/scripts/bugcatcher.lua#script.new()
 
 
